@@ -9,8 +9,8 @@ Chaque espace possède son propre univers et son propre objectif. Retrouvez ci-d
 
 # 📂 Mes projets
 
-## 🟣 Vory V — RP Arma 3 | Arma 4 Life
-## ☠️ Los Sicarios - RP GTA V | Diamond City
+- 🟣 Vory V — RP Arma 3 | Arma 4 Life
+- ☠️ Los Sicarios - RP GTA V | Diamond City
 
 
 © 2026 — Melworld_ | Espace personnel & projets indépendants.
