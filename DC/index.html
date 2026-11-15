@@ -13,7 +13,6 @@ button,input,select{font:inherit;color:inherit}
 .hide{display:none!important}.mu{color:var(--mu)}
 h1{font-size:20px;margin:12px 0 2px}h2{font-size:16px;margin:0 0 2px}
 #bgd,#bgm{position:fixed;inset:0;pointer-events:none;z-index:0}
-body[data-deco=logo] #bgd{background:var(--logo) 0 0/84px;opacity:.05}
 body[data-deco=grid] #bgd{background:linear-gradient(var(--acd) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,var(--acd) 1px,transparent 1px) 0 0/48px 48px;opacity:.5}
 body[data-deco=halo] #bgd{background:radial-gradient(circle at 85% -10%,var(--acd),transparent 50%),radial-gradient(circle at 0 100%,var(--acd),transparent 45%)}
 body[data-mot=frame] #bgm{box-shadow:inset 0 0 170px color-mix(in srgb,var(--ac) 20%,transparent)}
@@ -137,10 +136,11 @@ const today=iso(new Date()),fr=s=>s.split('-').reverse().join('/');
 const wkStart=s=>add(s,-((new Date(s+'T12:00:00').getDay()+6)%7));
 let users=[],subs=[],me=null,meId=null,page='mine',rejId=null,weekOff=0,sel='',calOpen=false;
 let DB=null,AS=null,USR=null,loaded=false,tried=false;
-let S={color:'#ff2447',bright:100,deco:'logo',mot:'frame'};
+let S={color:'#ff2447',bright:100,deco:'none',mot:'frame'};
 const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
 try{Object.assign(S,JSON.parse(ls.get('sic-set')||'{}'))}catch(e){}
-function apply(){const r=document.documentElement;r.style.setProperty('--ac',S.color);r.style.setProperty('--br',S.bright/100);r.style.setProperty('--logo',`url(${LOGO})`);document.body.dataset.deco=S.deco;document.body.dataset.mot=S.mot;ls.set('sic-set',JSON.stringify(S))}
+if(S.deco==='logo')S.deco='none';
+function apply(){const r=document.documentElement;r.style.setProperty('--ac',S.color);r.style.setProperty('--br',S.bright/100);document.body.dataset.deco=S.deco;document.body.dataset.mot=S.mot;ls.set('sic-set',JSON.stringify(S))}
 document.querySelectorAll('.lg').forEach(i=>i.src=LOGO);apply();
 function flash(t){const e=$('#toast');e.textContent=t;e.classList.remove('hide');clearTimeout(flash.t);flash.t=setTimeout(()=>e.classList.add('hide'),3500)}
 const wr=(p,d)=>DB.doc(p).update(d).catch(()=>flash('Écriture refusée : le Chef doit t’inviter en Contributeur.'));
@@ -245,7 +245,7 @@ function settings(){
  return `<div class="head"><div><h2>Paramètres</h2><div class="mu">Apparence du site, enregistrée sur cet appareil.</div></div></div><div class="set">
  <div class="card"><b>Couleur signature</b><div class="seg">${COLS.map(([n,c])=>`<button class="sw ${S.color===c?'on':''}" style="--c:${c}" data-col="${c}" title="${n}" aria-label="${n}"></button>`).join('')}</div></div>
  <div class="card"><b>Luminosité</b><input type="range" id="bri" min="60" max="130" value="${S.bright}" aria-label="Luminosité"><div class="hint">${S.bright}%</div></div>
- <div class="card"><b>Fond décoratif</b>${seg('deco',[['none','Aucun'],['logo','Logo'],['grid','Grille'],['halo','Halo']])}</div>
+ <div class="card"><b>Fond décoratif</b>${seg('deco',[['none','Aucun'],['grid','Grille'],['halo','Halo']])}</div>
  <div class="card"><b>Mouvement de fond</b>${seg('mot',[['frame','Cadre fixe'],['lanes','Allées animées'],['none','Aucun']])}</div></div>`}
 
 $('#view').onclick=e=>{const t=e.target,g=a=>t.dataset[a];
