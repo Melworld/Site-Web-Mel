@@ -89,7 +89,7 @@ input[type=range]{padding:0;background:none;accent-color:var(--ac)}
    <label for="n2">Nom RP</label><input id="n2" required autocomplete="off" placeholder="Prénom Nom">
    <label for="d2">Pseudo Discord</label><input id="d2" autocomplete="off">
    <label for="p2">Code à 4 chiffres</label><input id="p2" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required placeholder="0000">
-   <div class="hint">Ton compte est créé en Recrue. Il reste bloqué jusqu’à activation par le Chef, le Sous-chef ou le Bras droit. Ton nom RP, ton Discord et ton code seront visibles par la direction : choisis un code que tu n’utilises nulle part ailleurs.</div>
+   <div class="hint">Ton compte est créé en Recrue. Il reste bloqué jusqu’à activation par le Chef, le Sous-chef ou le Bras droit. Le PIN n’est jamais affiché dans l’interface ni enregistré dans le profil.</div>
    <button class="btn full">Demander l’accès</button>
   </form>
   <div class="msg" id="am" role="alert"></div>
@@ -123,21 +123,22 @@ input[type=range]{padding:0;background:none;accent-color:var(--ac)}
  <div class="row"><button type="button" class="gh" data-close="drf">Annuler</button><button class="btn">Refuser</button></div>
 </form></dialog>
 
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+const SUPABASE_URL="https://TON-PROJET.supabase.co";
+const SUPABASE_ANON_KEY="TA_CLE_PUBLISHABLE_OU_ANON";
 const LOGO='data:image/png;base64,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';
 const RANKS=['Chef','Sous-chef','Bras droit','Lead d’opération','Capitaine','Soldat','Recrue'];
 const ADMIN_MAX=2,DAY_MAX=10,WEEK_MIN=4,D=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 const COLS=[['Rouge','#ff2447'],['Orange','#ff8a1f'],['Or','#f2b84b'],['Violet','#a855f7'],['Bleu','#3b9bff'],['Vert','#2ed47a']];
 const $=s=>document.querySelector(s);
-const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const add=(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
 const today=iso(new Date()),fr=s=>s.split('-').reverse().join('/');
 const wkStart=s=>add(s,-((new Date(s+'T12:00:00').getDay()+6)%7));
-let users=[],subs=[],me=null,meId=null,page='mine',rejId=null,weekOff=0,sel='',calOpen=false;
-let DB=null,AS=null,USR=null,loaded=false,tried=false;
+let users=[],subs=[],me=null,meId=null,page='mine',rejId=null,weekOff=0,sel='',calOpen=false,loaded=false;
+let sb=null,session=null,refreshing=false;
 let S={color:'#ff2447',bright:100,deco:'none',mot:'frame'};
 const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
 try{Object.assign(S,JSON.parse(ls.get('sic-set')||'{}'))}catch(e){}
@@ -145,48 +146,76 @@ if(S.deco==='logo')S.deco='none';
 function apply(){const r=document.documentElement;r.style.setProperty('--ac',S.color);r.style.setProperty('--br',S.bright/100);document.body.dataset.deco=S.deco;document.body.dataset.mot=S.mot;ls.set('sic-set',JSON.stringify(S))}
 document.querySelectorAll('.lg').forEach(i=>i.src=LOGO);apply();
 function flash(t){const e=$('#toast');e.textContent=t;e.classList.remove('hide');clearTimeout(flash.t);flash.t=setTimeout(()=>e.classList.add('hide'),3500)}
-const wr=(p,d)=>DB.doc(p).update(d).catch(()=>flash('Écriture refusée : le Chef doit t’inviter en Contributeur.'));
-
+function setMsg(t,ok){const m=$('#am');m.textContent=t;m.className='msg'+(ok?' ok':'')}
+async function rpEmail(key){const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(key));const hex=Array.from(new Uint8Array(bytes)).map(b=>b.toString(16).padStart(2,'0')).join('');return 'rp-'+hex+'@los-sicarios.invalid'}
+function rpPassword(pin){return 'LS!'+pin}
+function isAdmin(u){return !!u&&u.rank<=ADMIN_MAX}
 const ws=()=>add(wkStart(today),7*weekOff),days=()=>[0,1,2,3,4,5,6].map(i=>add(ws(),i));
-const isAdmin=u=>u.rank<=ADMIN_MAX,rk=u=>RANKS[u.rank]||'Recrue',byId=id=>users.find(u=>u.id===id)||{name:'(supprimé)',rank:6};
+const rk=u=>RANKS[u.rank]||'Recrue',byId=id=>users.find(u=>u.id===id)||{name:'(supprimé)',rank:6};
 const dq=(id,d,st)=>subs.filter(s=>s.uid===id&&s.date===d&&(st?s.st===st:s.st!=='r')).reduce((a,s)=>a+s.qty,0);
 const daysDone=id=>days().filter(d=>dq(id,d,'v')>=DAY_MAX).length;
 const wkTot=(id,st)=>days().reduce((a,d)=>a+dq(id,d,st),0);
-
-function setMsg(t,ok){const m=$('#am');m.textContent=t;m.className='msg'+(ok?' ok':'')}
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));$('#fin').classList.toggle('hide',b.dataset.t!=='in');$('#fup').classList.toggle('hide',b.dataset.t!=='up');setMsg('')});
-function enter(id,rem){meId=id;me=users.find(u=>u.id===id);if(rem)ls.set('sic-me',id);page='mine';weekOff=0;sel='';$('#auth').classList.add('hide');$('#app').classList.remove('hide');render()}
-function leave(){meId=null;me=null;ls.del('sic-me');$('#app').classList.add('hide');$('#auth').classList.remove('hide');$('#fin').reset();setMsg('')}
-$('#out').onclick=leave;
-$('#fin').onsubmit=e=>{e.preventDefault();
- if(!loaded)return setMsg(DB?'Connexion à la base en cours, réessaie dans un instant.':'Base de données indisponible : ouvre le site depuis le lien partagé par le Chef.');
- const u=users.find(x=>x.key===$('#n1').value.trim().toLowerCase()&&x.pin===$('#p1').value);
- if(!u)return setMsg('Nom RP ou code incorrect.');
- if(!u.on)return setMsg('Compte en attente d’activation par la direction (Chef, Sous-chef ou Bras droit).');
- enter(u.id,$('#rm').checked)};
-$('#fup').onsubmit=async e=>{e.preventDefault();
- if(!loaded)return setMsg('Base de données indisponible pour le moment.');
- const n=$('#n2').value.trim(),key=n.toLowerCase();
- if(users.some(x=>x.key===key))return setMsg('Ce nom RP existe déjà.');
- const owner=USR?await USR.isOwner():false;
- try{await DB.collection('accounts').add({name:n,key,discord:$('#d2').value.trim(),pin:$('#p2').value,rank:owner?0:6,on:owner,at:Date.now()});
-  e.target.reset();setMsg(owner?'Compte Chef créé. Tu peux te connecter.':'Demande envoyée. Un administrateur doit activer ton compte avant ta première connexion.',true)}
- catch(x){setMsg('Création refusée : demande au Chef de t’inviter en Contributeur.')}};
-document.addEventListener('click',e=>{const c=e.target.closest('[data-close]');if(c)$('#'+c.dataset.close).close()});
-
-function listen(db){
- const to=setTimeout(()=>{if(!loaded)setMsg('Base injoignable pour le moment. Vérifie ta connexion.')},10000);
- db.collection('accounts').onSnapshot(q=>{users=q.docs.map(d=>({id:d.id,...d.data()}));loaded=true;clearTimeout(to);if(!me)setMsg('');
-  if(!tried){tried=true;const r=ls.get('sic-me'),u=r&&users.find(x=>x.id===r&&x.on);if(u)enter(u.id,true)}
-  else if(meId){me=users.find(u=>u.id===meId);if(!me||!me.on)leave();else render()}},er=>setMsg('Erreur base : '+(er.message||er.code)));
- db.collection('subs').onSnapshot(q=>{subs=q.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.at||0)-(a.at||0));if(me)render()},()=>{});
+async function loadData(){
+ const [{data:ps,error:pe},{data:ss,error:se}]=await Promise.all([
+  sb.from('profiles').select('id,rp_name,rp_key,discord,rank,active,created_at'),
+  sb.from('submissions').select('id,user_id,work_date,quantity,photo_path,note,status,reason,created_at').order('created_at',{ascending:false})
+ ]);
+ if(pe)throw pe;if(se)throw se;
+ users=(ps||[]).map(x=>({id:x.id,name:x.rp_name,key:x.rp_key,discord:x.discord||'',rank:x.rank,on:x.active,at:x.created_at}));
+ subs=await Promise.all((ss||[]).map(async x=>{let photo='';if(x.photo_path){const {data}=await sb.storage.from('proofs').createSignedUrl(x.photo_path,3600);photo=data?.signedUrl||''}
+  return {id:x.id,uid:x.user_id,date:x.work_date,qty:x.quantity,photo,photo_path:x.photo_path,note:x.note||'',st:x.status,reason:x.reason||'',at:new Date(x.created_at).getTime()}}));
+ loaded=true;
+ if(meId){me=users.find(u=>u.id===meId);if(!me||!me.on){leave();return}}
+ if(me)render();
 }
+async function wr(path,data){
+ try{const [table,id]=path.split('/');let q;
+  if(table==='accounts'){
+   const upd={};if('on'in data)upd.active=data.on;if('rank'in data)upd.rank=data.rank;
+   q=await sb.from('profiles').update(upd).eq('id',id);
+  }else if(table==='subs'){
+   const upd={};if('st'in data)upd.status=data.st;if('reason'in data)upd.reason=data.reason;
+   q=await sb.from('submissions').update(upd).eq('id',id);
+  }
+  if(q?.error)throw q.error;await loadData();flash('Modification enregistrée.');
+ }catch(e){console.error(e);flash('Écriture refusée : vérifie tes droits Supabase.')}
+}
+function enter(id,rem){meId=id;me=users.find(u=>u.id===id);if(rem)ls.set('sic-me',id);else ls.del('sic-me');page='mine';weekOff=0;sel='';$('#auth').classList.add('hide');$('#app').classList.remove('hide');render()}
+async function leave(){try{await sb?.auth.signOut()}catch(e){}meId=null;me=null;ls.del('sic-me');$('#app').classList.add('hide');$('#auth').classList.remove('hide');$('#fin').reset();setMsg('')}
+$('#out').onclick=leave;
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));$('#fin').classList.toggle('hide',b.dataset.t!=='in');$('#fup').classList.toggle('hide',b.dataset.t!=='up');setMsg('')});
+$('#fin').onsubmit=async e=>{e.preventDefault();if(!loaded)return setMsg('Connexion à Supabase en cours…');
+ const name=$('#n1').value.trim(),key=name.toLowerCase(),pin=$('#p1').value;
+ if(!/^\d{4}$/.test(pin))return setMsg('Le code doit contenir exactement 4 chiffres.');
+ try{const {data,error}=await sb.auth.signInWithPassword({email:await rpEmail(key),password:rpPassword(pin)});if(error)throw error;session=data.session;
+  await loadData();const u=users.find(x=>x.id===data.user.id);if(!u){await sb.auth.signOut();return setMsg('Profil RP introuvable. Contacte la direction.')}
+  if(!u.on){await sb.auth.signOut();return setMsg('Compte en attente d’activation par la direction.')}
+  enter(u.id,$('#rm').checked);
+ }catch(x){console.error(x);setMsg('Nom RP ou code incorrect.')}};
+$('#fup').onsubmit=async e=>{e.preventDefault();if(!loaded)return setMsg('Base de données indisponible pour le moment.');
+ const n=$('#n2').value.trim(),key=n.toLowerCase(),pin=$('#p2').value,discord=$('#d2').value.trim();
+ if(!n)return setMsg('Entre ton nom RP.');if(!/^\d{4}$/.test(pin))return setMsg('Le code doit contenir exactement 4 chiffres.');
+ if(users.some(x=>x.key===key))return setMsg('Ce nom RP existe déjà.');
+ try{const {data,error}=await sb.auth.signUp({email:await rpEmail(key),password:rpPassword(pin),options:{data:{rp_name:n}}});if(error)throw error;
+  if(!data.user)throw new Error('Compte Auth non créé.');
+  const {error:pe}=await sb.from('profiles').insert({id:data.user.id,rp_name:n,rp_key:key,discord,rank:6,active:false});if(pe)throw pe;
+  if(data.session)await sb.auth.signOut();e.target.reset();await loadData();setMsg('Demande envoyée. Un administrateur doit activer ton compte avant ta première connexion.',true);
+ }catch(x){console.error(x);setMsg('Création refusée : nom RP déjà utilisé ou confirmation e-mail encore activée dans Supabase.')}};
+document.addEventListener('click',e=>{const c=e.target.closest('[data-close]');if(c)$('#'+c.dataset.close).close()});
 async function boot(){
- try{USR=await claude.use('user');DB=await claude.use('db');AS=await claude.use('assets')}catch(e){}
- if(!DB)return setMsg('Base de données indisponible : ouvre le site depuis le lien partagé par le Chef.');
- setMsg('Connexion à la base…',true);listen(DB)}
+ try{
+  if(!window.supabase?.createClient)throw new Error('SDK Supabase non chargé.');
+  if(SUPABASE_URL.includes('TON-PROJET')||SUPABASE_ANON_KEY.includes('TA_CLE'))throw new Error('Configure l’URL et la clé Publishable dans accueil.html.');
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  setMsg('Connexion à Supabase…',true);
+  const {data:{session:sess}}=await sb.auth.getSession();session=sess;
+  await loadData();
+  if(session){const u=users.find(x=>x.id===session.user.id);if(u?.on)enter(u.id,true);else if(u)await sb.auth.signOut()}
+  sb.channel('sicarios-live').on('postgres_changes',{event:'*',schema:'public',table:'profiles'},()=>loadData().catch(console.error)).on('postgres_changes',{event:'*',schema:'public',table:'submissions'},()=>loadData().catch(console.error)).subscribe();
+  if(!me)setMsg('Connecte-toi avec ton Nom RP et ton code PIN.');
+ }catch(e){console.error(e);setMsg(e.message||'Impossible de joindre Supabase.')}
+}
 boot();
-
 const PAGES=[['mine','Mes conteneurs',0],['settings','Paramètres',0],['valid','Validation des preuves',1],['team','Suivi équipe',1],['members','Membres',1]];
 function render(){
  const adm=isAdmin(me),pend=subs.filter(s=>s.st==='p').length,inact=users.filter(u=>!u.on).length;
@@ -235,12 +264,12 @@ function team(){
  </tbody></table></div></div>`}
 function members(){
  const can=u=>u.rank>me.rank;
- return `<div class="head"><div><h2>Membres</h2><div class="mu">Comptes créés, activation et hiérarchie. Nom RP, Discord et code visibles par la direction.</div></div></div>
- <div class="card" style="padding:0"><div class="tw"><table><thead><tr><th>Nom RP</th><th>Discord</th><th>Code</th><th>Rang</th><th>Compte</th><th></th></tr></thead><tbody>
- ${[...users].sort((a,b)=>a.on-b.on||a.rank-b.rank).map(u=>`<tr><td>${esc(u.name)}</td><td class="mu">${esc(u.discord||'—')}</td><td>${esc(u.pin)}</td>
+ return `<div class="head"><div><h2>Membres</h2><div class="mu">Comptes créés, activation et hiérarchie. Nom RP et Discord visibles par la direction. Le PIN n’est jamais affiché ni stocké dans le profil.</div></div></div>
+ <div class="card" style="padding:0"><div class="tw"><table><thead><tr><th>Nom RP</th><th>Discord</th><th>Rang</th><th>Compte</th><th></th></tr></thead><tbody>
+ ${[...users].sort((a,b)=>a.on-b.on||a.rank-b.rank).map(u=>`<tr><td>${esc(u.name)}</td><td class="mu">${esc(u.discord||'—')}</td>
  <td>${can(u)&&u.on?`<select data-rk="${u.id}" style="width:auto">${RANKS.map((r,i)=>i>me.rank?`<option value="${i}" ${i===u.rank?'selected':''}>${r}</option>`:'').join('')}</select>`:`<span class="tag rk">${rk(u)}</span>`}</td>
  <td>${u.on?'<span class="tag v">Actif</span>':'<span class="tag p">En attente</span>'}</td>
- <td class="n">${can(u)?(u.on?`<button class="gh sm" data-off="${u.id}">Désactiver</button>`:`<button class="btn sm" data-on="${u.id}">Activer</button>`):''}</td></tr>`).join('')||'<tr><td colspan="6" class="mu">Aucun compte.</td></tr>'}
+ <td class="n">${can(u)?(u.on?`<button class="gh sm" data-off="${u.id}">Désactiver</button>`:`<button class="btn sm" data-on="${u.id}">Activer</button>`):''}</td></tr>`).join('')||'<tr><td colspan="5" class="mu">Aucun compte.</td></tr>'}
  </tbody></table></div></div>`}
 function settings(){
  const seg=(k,o)=>`<div class="seg">${o.map(([v,l])=>`<button data-s="${k}" data-v="${v}" class="${S[k]===v?'on':''}">${l}</button>`).join('')}</div>`;
@@ -266,16 +295,16 @@ function upd(){const left=DAY_MAX-dq(me.id,$('#sd').value||today);$('#sl').textC
 $('#sd').onchange=upd;
 $('#sp').onchange=e=>{const f=e.target.files[0],i=$('#sprev');if(f){i.src=URL.createObjectURL(f);i.classList.remove('hide')}else i.classList.add('hide')};
 const blobOf=(f,max,q)=>new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=()=>{const im=new Image();im.onerror=rej;im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(),'image/jpeg',q)};im.src=r.result};r.readAsDataURL(f)});
-const b2u=b=>new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(b)});
-async function photoOf(f){
- if(AS){try{return (await AS.upload(await blobOf(f,1600,.82))).url}catch(e){}}
- let q=.6,m=900,u;do{u=await b2u(await blobOf(f,m,q));q-=.08;m-=100}while(u.length>180000&&m>300);return u}
-$('#fs').onsubmit=async e=>{e.preventDefault();const d=$('#sd').value,q=+$('#sq').value,m=$('#sm');
+$('#fs').onsubmit=async e=>{e.preventDefault();const d=$('#sd').value,q=+$('#sq').value,m=$('#sm'),file=$('#sp').files[0];
  if(d>today||wkStart(d)!==wkStart(today))return m.textContent='Date invalide : semaine en cours uniquement.';
+ if(!file)return m.textContent='Ajoute une photo comme preuve.';
  if(dq(me.id,d)+q>DAY_MAX)return m.textContent=`Limite de ${DAY_MAX} conteneurs par jour dépassée.`;
- m.textContent='Envoi en cours…';
- try{const photo=await photoOf($('#sp').files[0]);await DB.collection('subs').add({uid:me.id,date:d,qty:q,photo,note:$('#sn').value,st:'p',at:Date.now()});$('#dsub').close();weekOff=0;render()}
- catch(x){m.textContent='Envoi impossible. Vérifie la photo et tes droits (Contributeur).'}};
+ if(q<1||q>DAY_MAX)return m.textContent='Quantité invalide.';m.textContent='Envoi en cours…';
+ try{const blob=await blobOf(file,1600,.82),path=`${me.id}/${crypto.randomUUID()}.jpg`;
+  const {error:upErr}=await sb.storage.from('proofs').upload(path,blob,{contentType:'image/jpeg',upsert:false});if(upErr)throw upErr;
+  const {error}=await sb.from('submissions').insert({user_id:me.id,work_date:d,quantity:q,photo_path:path,note:$('#sn').value, status:'p'});if(error){await sb.storage.from('proofs').remove([path]);throw error}
+  $('#dsub').close();weekOff=0;await loadData();render();
+ }catch(x){console.error(x);m.textContent='Envoi impossible. Vérifie les droits Storage et les règles RLS.'}};
 </script>
 </body>
 </html>
