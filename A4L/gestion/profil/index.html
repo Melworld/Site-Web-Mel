@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Vory V — Mon profil</title><style>
+:root{
+  --bg:#09090b;--panel:#111113;--panel2:#151518;--muted:#8b8b94;--line:#25252b;
+  --accent:#f97316;--accent2:#fb923c;--danger:#7f1d1d;--ok:#166534;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;background:var(--bg);color:#fff;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+a{color:inherit}
+.hidden{display:none!important}
+.page-shell{max-width:1180px;margin:0 auto;padding:34px 24px 80px}
+.page-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:52px}
+.page-kicker{color:var(--accent);font-size:12px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px}
+.page-top h1{margin:0;font-size:34px;letter-spacing:-.02em}
+.back-link{color:#aaa;text-decoration:none;font-weight:800;margin-top:8px}.back-link:hover{color:#fff}
+.muted{color:var(--muted);font-size:13px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+.btn{border:0;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn.primary{background:var(--accent);color:#111}.btn.primary:hover{background:var(--accent2)}
+.btn.secondary{background:#1b1b1f;color:#fff;border:1px solid #303036}
+.btn.danger{background:#3a1518;color:#fecaca;border:1px solid #5f2227}
+.actions{display:flex;gap:9px;flex-wrap:wrap}
+.row{display:grid;gap:7px;margin-bottom:12px}
+.row label{font-size:13px;font-weight:800;color:#d4d4d8}
+.row input,.row select,.row textarea{width:100%;background:#0c0c0e;color:#fff;border:1px solid var(--line);border-radius:10px;padding:11px;outline:none}
+.row textarea{min-height:85px;resize:vertical}
+.row input:focus,.row select:focus,.row textarea:focus{border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.section-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.section-nav a{padding:9px 12px;border:1px solid var(--line);border-radius:9px;color:#aaa;text-decoration:none;font-size:13px;font-weight:800}
+.section-nav a:hover{background:#18181b;color:#fff}
+.member-panel{display:flex;align-items:center;gap:18px;padding:20px 22px;background:linear-gradient(180deg,#131316,#0f0f12);border:1px solid var(--line);border-radius:18px;margin-bottom:26px}
+.member-avatar{width:82px;height:82px;border-radius:50%;overflow:hidden;background:#1b1b20;border:1px solid #33333a;display:grid;place-items:center;font-size:30px;flex:none}
+.member-avatar img{width:100%;height:100%;object-fit:cover}
+.member-name{font-size:25px;font-weight:950;letter-spacing:-.02em}
+.member-role{color:#c7c7ce;font-size:14px;font-weight:800;margin-top:2px}
+.member-details{display:flex;gap:10px 20px;flex-wrap:wrap;margin-top:9px;color:var(--muted);font-size:13px}
+.member-details b{color:#fff}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:15px}
+.top h2{margin:0}
+.stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stat{background:#0d0d10;border:1px solid var(--line);border-radius:12px;padding:14px}
+.stat span{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
+.stat b{font-size:18px}
+@media(max-width:760px){
+  .page-shell{padding:24px 14px 60px}.page-top{margin-bottom:36px}.grid,.stat-grid{grid-template-columns:1fr}
+  .member-panel{align-items:flex-start}.member-details{display:grid;gap:5px}.page-top h1{font-size:28px}
+}
+
+.profile-info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.profile-info-grid .stat{min-width:0}
+.profile-info-grid .stat b{display:block;overflow-wrap:anywhere;word-break:break-word;white-space:normal;line-height:1.35}
+.profile-info-grid .email-stat b{font-size:15px}
+.profile-info-grid .empty-stat{visibility:hidden}
+@media(max-width:650px){
+  .profile-info-grid{grid-template-columns:1fr}
+  .profile-info-grid .empty-stat{display:none}
+}
+
+
+.profile-actions{display:grid;gap:10px;margin-bottom:16px}
+.profile-action{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.profile-action summary{list-style:none;cursor:pointer;padding:17px 18px;font-weight:900;display:flex;align-items:center;justify-content:space-between;gap:16px;user-select:none}
+.profile-action summary::-webkit-details-marker{display:none}
+.profile-action summary::after{content:"›";font-size:25px;color:var(--accent);transition:transform .18s ease}
+.profile-action[open] summary::after{transform:rotate(90deg)}
+.profile-action[open] summary{border-bottom:1px solid var(--line);background:#141417}
+.profile-action-body{padding:18px}
+.profile-action-body .row:last-of-type{margin-bottom:14px}
+.profile-action-link{background:var(--panel);border:1px solid var(--line);border-radius:14px;text-decoration:none;padding:17px 18px;font-weight:900;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.profile-action-link::after{content:"›";font-size:25px;color:var(--accent)}
+.profile-action-link:hover,.profile-action summary:hover{background:#151518}
+
+.profile-layout{display:grid;grid-template-columns:285px minmax(0,1fr);gap:22px;align-items:start}
+.profile-sidebar{position:sticky;top:24px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:10px}
+.profile-nav-btn,.profile-nav-link{width:100%;border:0;background:transparent;color:#aaa;text-decoration:none;text-align:left;padding:13px 14px;border-radius:10px;cursor:pointer;font-weight:850;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.profile-nav-btn::after,.profile-nav-link::after{content:"›";font-size:20px;color:#666}
+.profile-nav-btn:hover,.profile-nav-link:hover{background:#18181b;color:#fff}
+.profile-nav-btn.active{background:#1b1b1f;color:#fff}.profile-nav-btn.active::after{color:var(--accent)}
+.profile-nav-separator{height:1px;background:var(--line);margin:10px 7px}
+.profile-content{min-width:0}
+.profile-view{display:none}.profile-view.active{display:block}
+.profile-view-title{margin:0 0 16px;font-size:24px}
+.profile-view .card{margin-bottom:0}
+@media(max-width:780px){
+  .profile-layout{grid-template-columns:1fr}
+  .profile-sidebar{position:static}
+}
+</style></head>
+<body><div class="page-shell">
+<div class="page-top"><div><div class="page-kicker">Vory V — Espace Membre</div><h1>Mon profil</h1></div><a class="back-link" href="../index.html">← Retour à mon Espace Membre</a></div>
+<div class="card" style="padding:24px">
+  <div class="member-panel" style="margin:0;border:0;padding:0;background:transparent">
+    <button class="member-avatar" id="profileAvatar" type="button" style="cursor:pointer;color:#fff">👤</button>
+    <div>
+      <div class="member-name" id="profileName">—</div>
+      <div class="muted" id="avatarMsg" style="margin-top:6px">Clique sur la photo pour la modifier.</div>
+    </div>
+  </div>
+  <input id="avatarInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+</div>
+<div class="card">
+  <h2 style="margin-top:0">Mes informations</h2>
+  <div class="profile-info-grid">
+    <div class="stat"><span>Rang</span><b id="profileRank">—</b></div>
+    <div class="stat"><span>Argent Généré</span><b id="profileMoney">0 $</b></div>
+    <div class="stat"><span>Numéro</span><b id="profileNumber">—</b></div>
+    <div class="stat email-stat"><span>Email</span><b id="profileEmail">—</b></div>
+    <div class="stat"><span>Entreprise</span><b id="profileCompany">—</b></div>
+    <div class="stat"><span>Gang</span><b id="profileGang">—</b></div>
+  </div>
+</div>
+<div class="profile-layout">
+  <aside class="profile-sidebar">
+    <button class="profile-nav-btn active" type="button" data-profile-view="email">Modifier mon adresse mail RP</button>
+    <button class="profile-nav-btn" type="button" data-profile-view="number">Modifier mon numéro RP</button>
+    <button class="profile-nav-btn" type="button" data-profile-view="password">Modifier mon mot de passe</button>
+
+    <div class="profile-nav-separator"></div>
+
+    <a class="profile-nav-link" href="../../boutique/index.html">Accéder à mes achats sur la Boutique</a>
+    <a class="profile-nav-link" href="entreprise.html">Faire une demande pour rejoindre l'Entreprise</a>
+    <a class="profile-nav-link" href="gang.html">Faire une demande pour rejoindre le Gang</a>
+
+    <div class="profile-nav-separator"></div>
+
+    <a class="profile-nav-link" href="suppression.html">Faire une demande pour supprimer mon compte</a>
+  </aside>
+
+  <section class="profile-content">
+    <div class="profile-view active" id="profileView-email">
+      <div class="card">
+        <h2 class="profile-view-title">Modifier mon adresse mail RP</h2>
+        <div class="muted" style="margin-bottom:12px">Adresse actuelle : <b id="currentEmailRp">—</b></div>
+        <div class="row"><label>Nouvelle adresse mail RP</label><input id="newEmailRp" type="email" placeholder="email@a4l.fr"></div>
+        <button class="btn primary" id="changeEmailRp">Enregistrer</button>
+        <div class="muted" id="emailRpMsg" style="margin-top:10px"></div>
+      </div>
+    </div>
+
+    <div class="profile-view" id="profileView-number">
+      <div class="card">
+        <h2 class="profile-view-title">Modifier mon numéro RP</h2>
+        <div class="muted" style="margin-bottom:12px">Numéro actuel : <b id="currentMemberNumber">—</b></div>
+        <div class="row"><label>Nouveau numéro RP</label><input id="newMemberNumber" placeholder="00-00-00-00-00" maxlength="14"></div>
+        <button class="btn primary" id="changeMemberNumber">Enregistrer</button>
+        <div class="muted" id="numberMsg" style="margin-top:10px"></div>
+      </div>
+    </div>
+
+    <div class="profile-view" id="profileView-password">
+      <div class="card">
+        <h2 class="profile-view-title">Modifier le mot de passe de mon compte</h2>
+        <div class="row"><label>Ancien mot de passe</label><input id="oldPw" type="password" autocomplete="current-password"></div>
+        <div class="row"><label>Nouveau mot de passe</label><input id="pw1" type="password" autocomplete="new-password"></div>
+        <div class="row"><label>Confirmer le nouveau mot de passe</label><input id="pw2" type="password" autocomplete="new-password"></div>
+        <button class="btn primary" id="changePw">Enregistrer</button>
+        <div class="muted" id="pwMsg" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../database.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+let db=null,currentUser=null,currentProfile=null;
+if(window.vorySupabaseConfigured&&window.vorySupabaseConfigured()){
+  db=window.supabase.createClient(window.VORY_SUPABASE_URL,window.VORY_SUPABASE_KEY);
+}
+function roleLabel(role){
+  if(role==='admin') return 'Administrateur';
+  if(role==='moderator') return 'Modérateur';
+  return 'Membre';
+}
+function renderMemberPanel(){
+  if($('memberName')) $('memberName').textContent=currentProfile.rp_name||'Sans Nom RP';
+  if($('memberRole')) $('memberRole').textContent=roleLabel(currentProfile.role);
+  if($('memberNumber')) $('memberNumber').textContent=currentProfile.member_number||'Non attribué';
+  if($('memberEmail')) $('memberEmail').textContent=currentProfile.membre_email_rp||'—';
+  if($('memberMoney')) $('memberMoney').textContent=Number(currentProfile.money||0).toLocaleString('fr-FR')+' $';
+  if($('memberAvatar')&&currentProfile.avatar_url){
+    const clean=String(currentProfile.avatar_url).split('?v=')[0];
+    $('memberAvatar').innerHTML='<img src="'+clean+'?v='+Date.now()+'" alt="Photo de profil">';
+  }
+  if(currentProfile.role==='member'){
+    if($('navPoints')) $('navPoints').style.display='none';
+    if($('navSite')) $('navSite').style.display='none';
+    if($('navAccounts')) $('navAccounts').style.display='none';
+  } else if(currentProfile.role==='moderator'){
+    if($('navSite')) $('navSite').style.display='none';
+    if($('navAccounts')) $('navAccounts').style.display='none';
+  }
+}
+async function loadIdentity(allowedRoles=['member','moderator','admin']){
+  if(!db){ location.href='../'; return false; }
+  const {data:{session}}=await db.auth.getSession();
+  currentUser=session?.user||null;
+  if(!currentUser){ location.href='../'; return false; }
+  const {data,error}=await db.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
+  if(error||!data){ location.href='../'; return false; }
+  currentProfile=data;
+  if(!allowedRoles.includes(currentProfile.role)){ location.href='../'; return false; }
+  renderMemberPanel();
+  return true;
+}
+
+
+document.querySelectorAll('.profile-nav-btn[data-profile-view]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const target=btn.dataset.profileView;
+    document.querySelectorAll('.profile-nav-btn[data-profile-view]').forEach(x=>x.classList.toggle('active',x===btn));
+    document.querySelectorAll('.profile-view').forEach(view=>view.classList.toggle('active',view.id==='profileView-'+target));
+  });
+});
+
+function setProfileAvatar(url){if(!url){$('profileAvatar').innerHTML='👤';return}const clean=String(url).split('?v=')[0];$('profileAvatar').innerHTML='<img src="'+clean+'?v='+Date.now()+'" alt="Photo">'}
+$('profileAvatar').onclick=()=>$('avatarInput').click();
+$('avatarInput').onchange=async e=>{
+  const file=e.target.files?.[0];e.target.value='';if(!file)return;
+  if(!['image/png','image/jpeg','image/webp'].includes(file.type)){return $('avatarMsg').textContent='PNG, JPG ou WEBP uniquement.'}
+  if(file.size>5*1024*1024){return $('avatarMsg').textContent='5 Mo maximum.'}
+  $('avatarMsg').textContent='Envoi...';
+
+  // On stocke toujours l'avatar au même emplacement :
+  // avatars/UID/avatar.png
+  const path=currentUser.id+'/avatar.png';
+
+  const {error:upErr}=await db.storage
+    .from('avatars')
+    .upload(path,file,{
+      upsert:true,
+      contentType:file.type,
+      cacheControl:'3600'
+    });
+
+  if(upErr){
+    $('avatarMsg').textContent='Erreur upload : '+upErr.message;
+    return;
+  }
+
+  // URL exacte enregistrée dans profiles.avatar_url
+  const url=window.VORY_SUPABASE_URL
+    +'/storage/v1/object/public/avatars/'
+    +currentUser.id
+    +'/avatar.png';
+
+  const {data:updatedProfile,error:profileErr}=await db
+    .from('profiles')
+    .update({avatar_url:url})
+    .eq('id',currentUser.id)
+    .select('avatar_url')
+    .single();
+
+  if(profileErr){
+    console.error('Erreur profiles.avatar_url :',profileErr);
+    $('avatarMsg').textContent='Image envoyée, mais avatar_url n’a pas pu être enregistré : '+profileErr.message;
+    return;
+  }
+
+  if(!updatedProfile?.avatar_url){
+    $('avatarMsg').textContent='Image envoyée, mais avatar_url est toujours vide dans profiles.';
+    return;
+  }
+
+  currentProfile.avatar_url=updatedProfile.avatar_url;
+  setProfileAvatar(updatedProfile.avatar_url);
+  $('avatarMsg').textContent='Photo mise à jour et enregistrée dans le profil.';
+}
+
+$('newMemberNumber').addEventListener('input',()=>{
+  const digits=$('newMemberNumber').value.replace(/\D/g,'').slice(0,10);
+  $('newMemberNumber').value=digits.match(/.{1,2}/g)?.join('-')||'';
+});
+
+$('changeEmailRp').onclick=async()=>{
+  const value=$('newEmailRp').value.trim().toLowerCase();
+  const msg=$('emailRpMsg'); msg.textContent='';
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)){msg.textContent='Entre une adresse email valide.';return}
+  const {error}=await db.from('profiles').update({membre_email_rp:value}).eq('id',currentUser.id);
+  if(error){msg.textContent='Erreur : '+error.message;return}
+  currentProfile.membre_email_rp=value;
+  $('profileEmail').textContent=value;
+  $('currentEmailRp').textContent=value;
+  $('newEmailRp').value=value;
+  msg.textContent='Email RP modifié avec succès.';
+};
+
+$('changeMemberNumber').onclick=async()=>{
+  const value=$('newMemberNumber').value.trim();
+  const msg=$('numberMsg'); msg.textContent='';
+  if(!/^\d{2}-\d{2}-\d{2}-\d{2}-\d{2}$/.test(value)){msg.textContent='Format attendu : 00-00-00-00-00.';return}
+  const {error}=await db.from('profiles').update({member_number:value}).eq('id',currentUser.id);
+  if(error){msg.textContent='Erreur : '+error.message;return}
+  currentProfile.member_number=value;
+  $('profileNumber').textContent=value;
+  $('currentMemberNumber').textContent=value;
+  $('newMemberNumber').value=value;
+  msg.textContent='Numéro RP modifié avec succès.';
+};
+
+$('changePw').onclick=async()=>{
+  const oldPassword=$('oldPw').value;
+  const newPassword=$('pw1').value;
+  const confirmPassword=$('pw2').value;
+  const msg=$('pwMsg');
+
+  msg.textContent='';
+
+  if(!oldPassword){
+    msg.textContent='Entre ton ancien mot de passe.';
+    return;
+  }
+  if(newPassword.length<8){
+    msg.textContent='Le nouveau mot de passe doit contenir au moins 8 caractères.';
+    return;
+  }
+  if(newPassword!==confirmPassword){
+    msg.textContent='Les deux nouveaux mots de passe ne correspondent pas.';
+    return;
+  }
+  if(oldPassword===newPassword){
+    msg.textContent='Le nouveau mot de passe doit être différent de l’ancien.';
+    return;
+  }
+
+  msg.textContent='Vérification de l’ancien mot de passe...';
+
+  const {error:verifyError}=await db.auth.signInWithPassword({
+    email:currentUser.email,
+    password:oldPassword
+  });
+
+  if(verifyError){
+    msg.textContent='Ancien mot de passe incorrect.';
+    return;
+  }
+
+  const {error:updateError}=await db.auth.updateUser({password:newPassword});
+
+  if(updateError){
+    msg.textContent='Impossible de modifier le mot de passe : '+updateError.message;
+    return;
+  }
+
+  $('oldPw').value='';
+  $('pw1').value='';
+  $('pw2').value='';
+  msg.textContent='Mot de passe modifié avec succès.';
+}
+async function initPage(){
+  $('profileName').textContent=currentProfile.rp_name||'Sans Nom RP';
+  $('profileRank').textContent=roleLabel(currentProfile.role);
+  $('profileMoney').textContent=Number(currentProfile.money||0).toLocaleString('fr-FR')+' $';
+  $('profileNumber').textContent=currentProfile.member_number||'Non attribué';
+  $('profileEmail').textContent=currentProfile.membre_email_rp||'—';
+  $('newEmailRp').value=currentProfile.membre_email_rp||'';
+  $('newMemberNumber').value=currentProfile.member_number||'';
+  $('currentEmailRp').textContent=currentProfile.membre_email_rp||'Non renseignée';
+  $('currentMemberNumber').textContent=currentProfile.member_number||'Non attribué';
+  const companyLabels={
+    employee:'Employé de Vory V Industry',
+    associate:'Associé de Vory V Industry',
+    manager:'Gestionnaire de Vory V Industry',
+    pdg:'Patron de Vory V Industry'
+  };
+  $('profileCompany').textContent=companyLabels[currentProfile.company_rank]
+    || 'Ne fait pas partie de l’entreprise';
+  const gangLabels={
+    gang_member:'Membre de la Vory V Zakone',
+    right_hand:'Bras droit de la Vory V Zakone',
+    leader:'Leader de la Vory V Zakone'
+  };
+  $('profileGang').textContent=gangLabels[currentProfile.gang_rank]
+    || 'Ne fait pas partie du Gang';
+  setProfileAvatar(currentProfile.avatar_url);
+}
+
+(async()=>{if(await loadIdentity(['member','moderator','admin'])){if(typeof initPage==='function')await initPage();}})();
+</script></body></html>
