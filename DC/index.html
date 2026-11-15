@@ -188,12 +188,13 @@ const fmt=n=>Number(n||0).toLocaleString('fr-FR')+' $';
 async function loadData(){
  const [{data:ps,error:pe},{data:ss,error:se}]=await Promise.all([
   sb.from('profiles').select('id,rp_name,rp_key,discord,rank,active,created_at'),
-  sb.from('submissions').select('id,user_id,work_date,quantity,photo_path,note,status,reason,created_at,kind,amount').order('created_at',{ascending:false})
+  sb.from('submissions').select('id,user_id,work_date,quantity,photo_path,note,status,reason,created_at,kind,amount,validated_by,validated_at').order('created_at',{ascending:false})
  ]);
  if(pe)throw pe;if(se)throw se;
  users=(ps||[]).map(x=>({id:x.id,name:x.rp_name,key:x.rp_key,discord:x.discord||'',rank:x.rank,on:x.active,at:x.created_at}));
- subs=await Promise.all((ss||[]).map(async x=>{let photo='';if(x.photo_path){const {data}=await sb.storage.from('proofs').createSignedUrl(x.photo_path,3600);photo=data?.signedUrl||''}
-  return {id:x.id,uid:x.user_id,date:x.work_date,qty:x.quantity,kind:x.kind||'container',amt:Number(x.amount)||0,photo,photo_path:x.photo_path,note:x.note||'',st:x.status,reason:x.reason||'',at:new Date(x.created_at).getTime()}}));
+ const paths=(ss||[]).map(x=>x.photo_path).filter(Boolean),urls={};
+ if(paths.length){const {data:sg}=await sb.storage.from('proofs').createSignedUrls(paths,3600);(sg||[]).forEach(u=>{if(u.signedUrl)urls[u.path]=u.signedUrl})}
+ subs=(ss||[]).map(x=>({id:x.id,uid:x.user_id,date:x.work_date,qty:x.quantity,kind:x.kind||'container',amt:Number(x.amount)||0,photo:urls[x.photo_path]||'',photo_path:x.photo_path,note:x.note||'',st:x.status,reason:x.reason||'',at:new Date(x.created_at).getTime(),by:x.validated_by||'',vat:x.validated_at?new Date(x.validated_at).getTime():0}));
  loaded=true;
  if(meId){me=users.find(u=>u.id===meId);if(!me||!me.on){leave();return}}
  if(me)render();
@@ -245,7 +246,7 @@ async function boot(){
  }catch(e){console.error(e);setMsg(e.message||'Impossible de joindre Supabase.')}
 }
 boot();
-const PAGES=[['mine','Mes conteneurs',0],['atm','ATM',0],['superette','Supérettes',0],['settings','Paramètres',0],['valid','Validation des preuves',1],['team','Suivi équipe',1],['members','Membres',1]];
+const PAGES=[['mine','Mes conteneurs',0],['atm','ATM',0],['superette','Supérettes',0],['settings','Paramètres',0],['valid','Validation des preuves',1],['history','Historique',1],['team','Suivi équipe',1],['members','Membres',1]];
 function render(){
  const adm=isAdmin(me),pend=subs.filter(s=>s.st==='p').length,inact=users.filter(u=>!u.on).length;
  if(PAGES.find(p=>p[0]===page)[2]&&!adm)page='mine';
@@ -253,7 +254,7 @@ function render(){
  $('#nav').innerHTML=PAGES.filter(p=>!p[2]||adm).map(([k,l])=>{const n=k==='valid'?pend:k==='members'?inact:0;
   return `<button data-p="${k}" class="${k===page?'on':''}"><span>${l}</span>${n?`<em>${n}</em>`:''}</button>`}).join('');
  const f=$('#nav [data-p=valid]');if(f)f.insertAdjacentHTML('beforebegin','<div class="grp">Administration</div>');
- $('#view').innerHTML={mine:()=>activity('container'),atm:()=>activity('atm'),superette:()=>activity('superette'),valid,team,members,settings}[page]();topbar()}
+ $('#view').innerHTML={mine:()=>activity('container'),atm:()=>activity('atm'),superette:()=>activity('superette'),valid,history,team,members,settings}[page]();topbar()}
 function topbar(){
  const k=page==='atm'||page==='superette'?page:'container',dn=daysDone(me.id,k),u=dq(me.id,today,null,k);
  $('#top').innerHTML=`<span>${PAGES.find(p=>p[0]===page)[2]?'Administration / ':''}${PAGES.find(p=>p[0]===page)[1]}</span><span class="sp"></span>
@@ -294,6 +295,20 @@ function valid(){
  ${l.map(s=>{const u=byId(s.uid),pic=s.kind==='container';return `<tr><td>${pic?`<img class="th" src="${s.photo}" data-img="${s.id}" alt="Preuve">`:'<span class="mu">—</span>'}</td><td>${esc(u.name)} <span class="mu">· ${rk(u)}</span></td><td><span class="tag rk">${KINDS[s.kind].tag}</span></td><td>${fr(s.date)}</td><td class="n">${s.qty}</td><td class="n">${pic?'<span class="mu">—</span>':fmt(s.amt)}</td><td class="mu">${esc(s.note||'—')}</td>
  <td class="n"><button class="btn sm" data-ok="${s.id}">Valider</button> <button class="gh sm" data-no="${s.id}">Refuser</button></td></tr>`}).join('')||'<tr><td colspan="8" class="mu">Rien à valider pour le moment.</td></tr>'}
  </tbody></table></div></div>`}
+let hf='all',hm='';
+function history(){
+ let l=subs.filter(s=>s.st!=='p');
+ if(hf!=='all')l=l.filter(s=>s.st===hf);
+ if(hm)l=l.filter(s=>s.uid===hm);
+ l.sort((a,b)=>(b.vat||b.at)-(a.vat||a.at));
+ const tot=l.length,sh=l.slice(0,200);
+ const when=s=>s.vat?new Date(s.vat).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+ return `<div class="head"><div><h2>Historique des preuves</h2><div class="mu">Toutes les déclarations traitées, avec la personne qui les a validées ou refusées.</div></div></div>
+ <div class="head" style="margin-bottom:12px"><div class="seg">${[['all','Tous'],['v','Validés'],['r','Refusés']].map(([v,t])=>`<button data-hf="${v}" class="${hf===v?'on':''}">${t}</button>`).join('')}</div>
+ <select data-hm style="width:auto;max-width:240px" aria-label="Filtrer par membre"><option value="">Tous les membres</option>${[...users].sort((a,b)=>a.name.localeCompare(b.name)).map(u=>`<option value="${u.id}" ${hm===u.id?'selected':''}>${esc(u.name)}</option>`).join('')}</select></div>
+ <div class="card" style="padding:0"><div class="tw"><table style="min-width:920px"><thead><tr><th>Preuve</th><th>Membre</th><th>Type</th><th>Jour</th><th class="n">Quantité</th><th class="n">Argent</th><th>Statut</th><th>Traité par</th><th>Le</th></tr></thead><tbody>
+ ${sh.map(s=>{const u=byId(s.uid),pic=s.kind==='container';return `<tr><td>${s.photo?`<img class="th" src="${s.photo}" data-img="${s.id}" alt="Preuve">`:'<span class="mu">—</span>'}</td><td>${esc(u.name)}</td><td><span class="tag rk">${KINDS[s.kind].tag}</span></td><td>${fr(s.date)}</td><td class="n">${s.qty}</td><td class="n">${pic?'<span class="mu">—</span>':fmt(s.amt)}</td><td>${stag(s)}${s.reason?`<br><span class="mu">Motif : ${esc(s.reason)}</span>`:''}</td><td>${s.by?esc(byId(s.by).name):'<span class="mu">—</span>'}</td><td class="mu">${when(s)}</td></tr>`}).join('')||'<tr><td colspan="9" class="mu">Aucune preuve traitée pour le moment.</td></tr>'}
+ </tbody></table></div></div>${tot>sh.length?`<div class="hint">${sh.length} plus récentes affichées sur ${tot}.</div>`:''}`}
 function team(){
  const cell=(id,k)=>{const d=daysDone(id,k);return d>=WEEK_MIN?`<span class="tag v">${d} / ${WEEK_MIN}</span>`:`<span class="mu">${d} / ${WEEK_MIN}</span>`};
  return `<div class="head"><div><h2>Suivi équipe</h2><div class="mu">Semaine du ${fr(ws())} · minimum ${WEEK_MIN} jours complets par activité (${DAY_MAX} conteneurs, ${KINDS.atm.max} ATM ou ${KINDS.superette.max} supérettes par jour).</div></div></div>
@@ -320,6 +335,7 @@ function settings(){
 $('#view').onclick=e=>{const t=e.target,g=a=>t.dataset[a];
  if(t.id==='add')openSub(g('k'));
  if(g('img')){$('#pv').src=subs.find(s=>s.id===g('img')).photo;$('#dpv').showModal()}
+ if(g('hf')){hf=g('hf');render()}
  if(g('ok'))wr('subs/'+g('ok'),{st:'v'});
  if(g('no')){rejId=g('no');$('#frf').reset();$('#drf').showModal()}
  if(g('on'))wr('accounts/'+g('on'),{on:true});
@@ -327,7 +343,7 @@ $('#view').onclick=e=>{const t=e.target,g=a=>t.dataset[a];
  if(g('col')){S.color=g('col');apply();render()}
  if(g('s')){S[g('s')]=g('v');apply();render()}};
 $('#view').oninput=e=>{if(e.target.id==='bri'){S.bright=+e.target.value;apply();e.target.nextElementSibling.textContent=S.bright+'%'}};
-$('#view').onchange=e=>{if(e.target.dataset.rk)wr('accounts/'+e.target.dataset.rk,{rank:+e.target.value})};
+$('#view').onchange=e=>{if('hm' in e.target.dataset){hm=e.target.value;render();return}if(e.target.dataset.rk)wr('accounts/'+e.target.dataset.rk,{rank:+e.target.value})};
 $('#frf').onsubmit=e=>{e.preventDefault();wr('subs/'+rejId,{st:'r',reason:$('#rr').value});$('#drf').close()};
 let curKind='container';
 function openSub(k){curKind=k;const K=KINDS[k],pic=k==='container';$('#fs').reset();$('#dt').textContent='Déclarer '+K.decl;$('#ql').textContent=K.q;
