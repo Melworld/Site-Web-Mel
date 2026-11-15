@@ -107,12 +107,13 @@ input[type=range]{padding:0;background:none;accent-color:var(--ac)}
 </div>
 
 <dialog id="dsub"><form id="fs">
- <h2>Déclarer des conteneurs</h2>
+ <h2 id="dt">Déclarer des conteneurs</h2>
  <label for="sd">Jour</label><input id="sd" type="date" required>
- <label for="sq">Nombre de conteneurs</label><input id="sq" type="number" min="1" max="10" value="1" required>
+ <label for="sq" id="ql">Nombre de conteneurs</label><input id="sq" type="number" min="1" max="10" value="1" required>
  <div class="hint" id="sl"></div>
- <label for="sp">Preuve (photo)</label><input id="sp" type="file" accept="image/*" required>
- <img id="sprev" class="hide" alt="Aperçu de la preuve">
+ <div id="amw" class="hide"><label for="sa">Argent récolté ($)</label><input id="sa" type="number" min="1" step="1" inputmode="numeric" placeholder="ex : 4500"></div>
+ <div id="phw"><label for="sp">Preuve (photo)</label><input id="sp" type="file" accept="image/*" required>
+ <img id="sprev" class="hide" alt="Aperçu de la preuve"></div>
  <label for="sn">Note (facultatif)</label><input id="sn">
  <div class="msg" id="sm"></div>
  <div class="row"><button type="button" class="gh" data-close="dsub">Annuler</button><button class="btn">Envoyer</button></div>
@@ -130,6 +131,10 @@ const SUPABASE_ANON_KEY="sb_publishable_sHhPrks-w6z43PZdjcRDJA_c9m-ySif";
 const LOGO='data:image/png;base64,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';
 const RANKS=['Chef','Sous-chef','Bras droit','Lead d’opération','Capitaine','Soldat','Recrue'];
 const ADMIN_MAX=2,DAY_MAX=10,WEEK_MIN=4,D=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+const KINDS={
+ container:{max:DAY_MAX,chip:'Mes conteneurs',title:'Mes conteneurs',unit:'conteneurs',col:'Conteneurs',tag:'Conteneur',decl:'des conteneurs',q:'Nombre de conteneurs'},
+ atm:{max:3,chip:'ATM',title:'ATM',unit:'ATM',col:'ATM',tag:'ATM',decl:'des ATM',q:'Nombre d’ATM'},
+ superette:{max:3,chip:'Supérettes',title:'Supérettes',unit:'supérettes',col:'Supérettes',tag:'Supérette',decl:'des supérettes',q:'Nombre de supérettes'}};
 const COLS=[['Rouge','#ff2447'],['Orange','#ff8a1f'],['Or','#f2b84b'],['Violet','#a855f7'],['Bleu','#3b9bff'],['Vert','#2ed47a']];
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -168,18 +173,21 @@ function rpPassword(pin){return 'LS!'+pin}
 function isAdmin(u){return !!u&&u.rank<=ADMIN_MAX}
 const ws=()=>add(wkStart(today),7*weekOff),days=()=>[0,1,2,3,4,5,6].map(i=>add(ws(),i));
 const rk=u=>RANKS[u.rank]||'Recrue',byId=id=>users.find(u=>u.id===id)||{name:'(supprimé)',rank:6};
-const dq=(id,d,st)=>subs.filter(s=>s.uid===id&&s.date===d&&(st?s.st===st:s.st!=='r')).reduce((a,s)=>a+s.qty,0);
-const daysDone=id=>days().filter(d=>dq(id,d,'v')>=DAY_MAX).length;
-const wkTot=(id,st)=>days().reduce((a,d)=>a+dq(id,d,st),0);
+const dq=(id,d,st,k='container')=>subs.filter(s=>s.uid===id&&s.date===d&&s.kind===k&&(st?s.st===st:s.st!=='r')).reduce((a,s)=>a+s.qty,0);
+const daysDone=(id,k='container')=>days().filter(d=>dq(id,d,'v',k)>=KINDS[k].max).length;
+const wkTot=(id,st,k='container')=>days().reduce((a,d)=>a+dq(id,d,st,k),0);
+const wkMoney=(id,st)=>subs.filter(s=>s.uid===id&&s.kind!=='container'&&s.st===st&&days().includes(s.date)).reduce((a,s)=>a+s.amt,0);
+const wkPend=id=>subs.filter(s=>s.uid===id&&s.st==='p'&&days().includes(s.date)).length;
+const fmt=n=>Number(n||0).toLocaleString('fr-FR')+' $';
 async function loadData(){
  const [{data:ps,error:pe},{data:ss,error:se}]=await Promise.all([
   sb.from('profiles').select('id,rp_name,rp_key,discord,rank,active,created_at'),
-  sb.from('submissions').select('id,user_id,work_date,quantity,photo_path,note,status,reason,created_at').order('created_at',{ascending:false})
+  sb.from('submissions').select('id,user_id,work_date,quantity,photo_path,note,status,reason,created_at,kind,amount').order('created_at',{ascending:false})
  ]);
  if(pe)throw pe;if(se)throw se;
  users=(ps||[]).map(x=>({id:x.id,name:x.rp_name,key:x.rp_key,discord:x.discord||'',rank:x.rank,on:x.active,at:x.created_at}));
  subs=await Promise.all((ss||[]).map(async x=>{let photo='';if(x.photo_path){const {data}=await sb.storage.from('proofs').createSignedUrl(x.photo_path,3600);photo=data?.signedUrl||''}
-  return {id:x.id,uid:x.user_id,date:x.work_date,qty:x.quantity,photo,photo_path:x.photo_path,note:x.note||'',st:x.status,reason:x.reason||'',at:new Date(x.created_at).getTime()}}));
+  return {id:x.id,uid:x.user_id,date:x.work_date,qty:x.quantity,kind:x.kind||'container',amt:Number(x.amount)||0,photo,photo_path:x.photo_path,note:x.note||'',st:x.status,reason:x.reason||'',at:new Date(x.created_at).getTime()}}));
  loaded=true;
  if(meId){me=users.find(u=>u.id===meId);if(!me||!me.on){leave();return}}
  if(me)render();
@@ -231,7 +239,7 @@ async function boot(){
  }catch(e){console.error(e);setMsg(e.message||'Impossible de joindre Supabase.')}
 }
 boot();
-const PAGES=[['mine','Mes conteneurs',0],['settings','Paramètres',0],['valid','Validation des preuves',1],['team','Suivi équipe',1],['members','Membres',1]];
+const PAGES=[['mine','Mes conteneurs',0],['atm','ATM',0],['superette','Supérettes',0],['settings','Paramètres',0],['valid','Validation des preuves',1],['team','Suivi équipe',1],['members','Membres',1]];
 function render(){
  const adm=isAdmin(me),pend=subs.filter(s=>s.st==='p').length,inact=users.filter(u=>!u.on).length;
  if(PAGES.find(p=>p[0]===page)[2]&&!adm)page='mine';
@@ -239,13 +247,13 @@ function render(){
  $('#nav').innerHTML=PAGES.filter(p=>!p[2]||adm).map(([k,l])=>{const n=k==='valid'?pend:k==='members'?inact:0;
   return `<button data-p="${k}" class="${k===page?'on':''}"><span>${l}</span>${n?`<em>${n}</em>`:''}</button>`}).join('');
  const f=$('#nav [data-p=valid]');if(f)f.insertAdjacentHTML('beforebegin','<div class="grp">Administration</div>');
- $('#view').innerHTML={mine,valid,team,members,settings}[page]();topbar()}
+ $('#view').innerHTML={mine:()=>activity('container'),atm:()=>activity('atm'),superette:()=>activity('superette'),valid,team,members,settings}[page]();topbar()}
 function topbar(){
- const dn=daysDone(me.id),u=dq(me.id,today);
+ const k=page==='atm'||page==='superette'?page:'container',dn=daysDone(me.id,k),u=dq(me.id,today,null,k);
  $('#top').innerHTML=`<span>${PAGES.find(p=>p[0]===page)[2]?'Administration / ':''}${PAGES.find(p=>p[0]===page)[1]}</span><span class="sp"></span>
  <div class="wk"><button data-w="-1" aria-label="Semaine précédente">‹</button><button data-cal>${weekOff?'Semaine du '+fr(ws()):'Semaine en cours'}</button><button data-w="1" aria-label="Semaine suivante" ${weekOff>=0?'disabled':''}>›</button>
  ${calOpen?`<div class="pop">${days().map((d,i)=>`<button class="day ${d===today?'td':''} ${sel===d?'on':''}" data-day="${d}" ${d>today?'disabled':''}><small>${D[i]}</small><b>${d.slice(8)}</b><small>${dq(me.id,d,'v')}/${DAY_MAX}</small></button>`).join('')}<button class="day" data-day=""><small>Toute</small><b>⟲</b><small>semaine</small></button></div>`:''}</div>
- <span class="chip">Mes conteneurs <b>${dn}/${WEEK_MIN}</b> jours · <b>${u}/${DAY_MAX}</b> aujourd’hui</span><span class="okt">● Accès contrôlé</span>`}
+ <span class="chip">${KINDS[k].chip} <b>${dn}/${WEEK_MIN}</b> jours · <b>${u}/${KINDS[k].max}</b> aujourd’hui</span><span class="okt">● Accès contrôlé</span>`}
 $('#top').onclick=e=>{const t=e.target.closest('button');if(!t)return;
  if(t.dataset.w){weekOff+=+t.dataset.w;sel='';render()}
  else if('cal' in t.dataset){calOpen=!calOpen;topbar()}
@@ -253,29 +261,38 @@ $('#top').onclick=e=>{const t=e.target.closest('button');if(!t)return;
 $('#nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;page=b.dataset.p;render()};
 
 const stag=s=>s.st==='p'?'<span class="tag p">À valider</span>':s.st==='v'?'<span class="tag v">Validé</span>':`<span class="tag r">Refusé</span>`;
-function mine(){
- const dn=daysDone(me.id),used=dq(me.id,today),ok=dn>=WEEK_MIN,wd=days();
- const my=subs.filter(s=>s.uid===me.id&&wd.includes(s.date)&&(!sel||s.date===sel));
- return `<div class="head"><div><h2>Mes conteneurs</h2><div class="mu">${DAY_MAX} conteneurs par jour · ${WEEK_MIN} jours complets minimum par semaine · photo obligatoire.</div></div><button class="btn" id="add">+ Déclarer</button></div>
+function activity(k){
+ const K=KINDS[k],pic=k==='container',dn=daysDone(me.id,k),used=dq(me.id,today,null,k),ok=dn>=WEEK_MIN,wd=days();
+ const wk=subs.filter(s=>s.uid===me.id&&s.kind===k&&wd.includes(s.date));
+ const my=wk.filter(s=>!sel||s.date===sel);
+ const sum=st=>wk.filter(s=>s.st===st).reduce((a,s)=>a+s.amt,0);
+ const third=pic?`<div class="card"><span class="mu">Mon rang</span><div class="v">${rk(me)}</div></div>`
+  :`<div class="card"><span class="mu">Argent récolté (validé)</span><div class="v">${fmt(sum('v'))}</div><span class="mu">${sum('p')?fmt(sum('p'))+' en attente de validation':'Cette semaine'}</span></div>`;
+ const head=pic?'<th>Preuve</th><th>Jour</th><th class="n">Conteneurs</th><th>Note</th><th>Statut</th>':`<th>Jour</th><th class="n">${K.col}</th><th class="n">Argent récolté</th><th>Note</th><th>Statut</th>`;
+ const note=s=>`${esc(s.note||'—')}${s.reason?`<br><span style="color:#ff7d92">Motif : ${esc(s.reason)}</span>`:''}`;
+ const row=s=>pic?`<tr><td><img class="th" src="${s.photo}" data-img="${s.id}" alt="Preuve"></td><td>${fr(s.date)}</td><td class="n">${s.qty}</td><td class="mu">${note(s)}</td><td>${stag(s)}</td></tr>`
+  :`<tr><td>${fr(s.date)}</td><td class="n">${s.qty}</td><td class="n">${fmt(s.amt)}</td><td class="mu">${note(s)}</td><td>${stag(s)}</td></tr>`;
+ return `<div class="head"><div><h2>${K.title}</h2><div class="mu">${K.max} ${K.unit} par jour · ${WEEK_MIN} jours complets minimum par semaine · ${pic?'photo obligatoire.':'déclare le montant récolté (sans photo).'}</div></div><button class="btn" id="add" data-k="${k}">+ Déclarer</button></div>
  <div class="kpis">
   <div class="card"><span class="mu">Jours complets (validés)</span><div class="v">${dn} / ${WEEK_MIN}</div><span class="mu">${ok?'Quota minimum atteint':'Il te manque '+(WEEK_MIN-dn)+' jour'+(WEEK_MIN-dn>1?'s':'')}</span><div class="bar"><i class="${ok?'ok':''}" style="width:${Math.min(100,dn/WEEK_MIN*100)}%"></i></div></div>
-  <div class="card"><span class="mu">Aujourd’hui</span><div class="v">${used} / ${DAY_MAX}</div><span class="mu">Un jour est complet à ${DAY_MAX} conteneurs validés</span><div class="bar"><i style="width:${used/DAY_MAX*100}%"></i></div></div>
-  <div class="card"><span class="mu">Mon rang</span><div class="v">${rk(me)}</div></div>
+  <div class="card"><span class="mu">Aujourd’hui</span><div class="v">${used} / ${K.max}</div><span class="mu">Un jour est complet à ${K.max} ${K.unit} validés</span><div class="bar"><i style="width:${Math.min(100,used/K.max*100)}%"></i></div></div>
+  ${third}
  </div>
- <div class="card" style="padding:0"><div class="tw"><table><thead><tr><th>Preuve</th><th>Jour</th><th class="n">Conteneurs</th><th>Note</th><th>Statut</th></tr></thead><tbody>
- ${my.map(s=>`<tr><td><img class="th" src="${s.photo}" data-img="${s.id}" alt="Preuve"></td><td>${fr(s.date)}</td><td class="n">${s.qty}</td><td class="mu">${esc(s.note||'—')}${s.reason?`<br><span style="color:#ff7d92">Motif : ${esc(s.reason)}</span>`:''}</td><td>${stag(s)}</td></tr>`).join('')||'<tr><td colspan="5" class="mu">Aucune déclaration sur cette période.</td></tr>'}
+ <div class="card" style="padding:0"><div class="tw"><table><thead><tr>${head}</tr></thead><tbody>
+ ${my.map(row).join('')||'<tr><td colspan="5" class="mu">Aucune déclaration sur cette période.</td></tr>'}
  </tbody></table></div></div>`}
 function valid(){
  const l=subs.filter(s=>s.st==='p');
- return `<div class="head"><div><h2>Validation des preuves</h2><div class="mu">Contrôle les preuves avant de valider.</div></div></div>
- <div class="card" style="padding:0"><div class="tw"><table><thead><tr><th>Preuve</th><th>Membre</th><th>Jour</th><th class="n">Conteneurs</th><th>Note</th><th></th></tr></thead><tbody>
- ${l.map(s=>{const u=byId(s.uid);return `<tr><td><img class="th" src="${s.photo}" data-img="${s.id}" alt="Preuve"></td><td>${esc(u.name)} <span class="mu">· ${rk(u)}</span></td><td>${fr(s.date)}</td><td class="n">${s.qty}</td><td class="mu">${esc(s.note||'—')}</td>
- <td class="n"><button class="btn sm" data-ok="${s.id}">Valider</button> <button class="gh sm" data-no="${s.id}">Refuser</button></td></tr>`}).join('')||'<tr><td colspan="6" class="mu">Rien à valider pour le moment.</td></tr>'}
+ return `<div class="head"><div><h2>Validation des preuves</h2><div class="mu">Contrôle les preuves et les montants avant de valider.</div></div></div>
+ <div class="card" style="padding:0"><div class="tw"><table><thead><tr><th>Preuve</th><th>Membre</th><th>Type</th><th>Jour</th><th class="n">Quantité</th><th class="n">Argent</th><th>Note</th><th></th></tr></thead><tbody>
+ ${l.map(s=>{const u=byId(s.uid),pic=s.kind==='container';return `<tr><td>${pic?`<img class="th" src="${s.photo}" data-img="${s.id}" alt="Preuve">`:'<span class="mu">—</span>'}</td><td>${esc(u.name)} <span class="mu">· ${rk(u)}</span></td><td><span class="tag rk">${KINDS[s.kind].tag}</span></td><td>${fr(s.date)}</td><td class="n">${s.qty}</td><td class="n">${pic?'<span class="mu">—</span>':fmt(s.amt)}</td><td class="mu">${esc(s.note||'—')}</td>
+ <td class="n"><button class="btn sm" data-ok="${s.id}">Valider</button> <button class="gh sm" data-no="${s.id}">Refuser</button></td></tr>`}).join('')||'<tr><td colspan="8" class="mu">Rien à valider pour le moment.</td></tr>'}
  </tbody></table></div></div>`}
 function team(){
- return `<div class="head"><div><h2>Suivi équipe</h2><div class="mu">Semaine du ${fr(ws())} · minimum ${WEEK_MIN} jours complets (${DAY_MAX} conteneurs).</div></div></div>
- <div class="card" style="padding:0"><div class="tw"><table><thead><tr><th>Membre</th><th>Rang</th><th class="n">Jours complets</th><th class="n">Conteneurs validés</th><th class="n">En attente</th><th>Quota</th></tr></thead><tbody>
- ${users.filter(u=>u.on).map(u=>{const d=daysDone(u.id);return `<tr><td>${esc(u.name)}</td><td><span class="tag rk">${rk(u)}</span></td><td class="n">${d} / ${WEEK_MIN}</td><td class="n">${wkTot(u.id,'v')}</td><td class="n">${wkTot(u.id,'p')}</td><td>${d>=WEEK_MIN?'<span class="tag v">Atteint</span>':'<span class="tag r">Sous le quota</span>'}</td></tr>`}).join('')||'<tr><td colspan="6" class="mu">Aucun membre actif.</td></tr>'}
+ const cell=(id,k)=>{const d=daysDone(id,k);return d>=WEEK_MIN?`<span class="tag v">${d} / ${WEEK_MIN}</span>`:`<span class="mu">${d} / ${WEEK_MIN}</span>`};
+ return `<div class="head"><div><h2>Suivi équipe</h2><div class="mu">Semaine du ${fr(ws())} · minimum ${WEEK_MIN} jours complets par activité (${DAY_MAX} conteneurs, ${KINDS.atm.max} ATM ou ${KINDS.superette.max} supérettes par jour).</div></div></div>
+ <div class="card" style="padding:0"><div class="tw"><table style="min-width:780px"><thead><tr><th>Membre</th><th>Rang</th><th class="n">Conteneurs (jours)</th><th class="n">ATM (jours)</th><th class="n">Supérettes (jours)</th><th class="n">Argent validé</th><th class="n">En attente</th></tr></thead><tbody>
+ ${users.filter(u=>u.on).map(u=>`<tr><td>${esc(u.name)}</td><td><span class="tag rk">${rk(u)}</span></td><td class="n">${cell(u.id,'container')}</td><td class="n">${cell(u.id,'atm')}</td><td class="n">${cell(u.id,'superette')}</td><td class="n">${fmt(wkMoney(u.id,'v'))}</td><td class="n">${wkPend(u.id)}</td></tr>`).join('')||'<tr><td colspan="7" class="mu">Aucun membre actif.</td></tr>'}
  </tbody></table></div></div>`}
 function members(){
  const can=u=>u.rank>me.rank;
@@ -295,7 +312,7 @@ function settings(){
  <div class="card"><b>Mouvement de fond</b>${seg('mot',[['frame','Cadre fixe'],['lanes','Allées animées'],['none','Aucun']])}</div></div>`}
 
 $('#view').onclick=e=>{const t=e.target,g=a=>t.dataset[a];
- if(t.id==='add'){$('#fs').reset();$('#sd').value=today;$('#sd').min=wkStart(today);$('#sd').max=today;$('#sm').textContent='';$('#sprev').classList.add('hide');upd();$('#dsub').showModal()}
+ if(t.id==='add')openSub(g('k'));
  if(g('img')){$('#pv').src=subs.find(s=>s.id===g('img')).photo;$('#dpv').showModal()}
  if(g('ok'))wr('subs/'+g('ok'),{st:'v'});
  if(g('no')){rejId=g('no');$('#frf').reset();$('#drf').showModal()}
@@ -306,20 +323,27 @@ $('#view').onclick=e=>{const t=e.target,g=a=>t.dataset[a];
 $('#view').oninput=e=>{if(e.target.id==='bri'){S.bright=+e.target.value;apply();e.target.nextElementSibling.textContent=S.bright+'%'}};
 $('#view').onchange=e=>{if(e.target.dataset.rk)wr('accounts/'+e.target.dataset.rk,{rank:+e.target.value})};
 $('#frf').onsubmit=e=>{e.preventDefault();wr('subs/'+rejId,{st:'r',reason:$('#rr').value});$('#drf').close()};
-function upd(){const left=DAY_MAX-dq(me.id,$('#sd').value||today);$('#sl').textContent=`Il te reste ${left} conteneur${left>1?'s':''} déclarable${left>1?'s':''} ce jour-là.`;$('#sq').max=Math.max(1,left)}
+let curKind='container';
+function openSub(k){curKind=k;const K=KINDS[k],pic=k==='container';$('#fs').reset();$('#dt').textContent='Déclarer '+K.decl;$('#ql').textContent=K.q;
+ $('#phw').classList.toggle('hide',!pic);$('#amw').classList.toggle('hide',pic);$('#sp').required=pic;$('#sa').required=!pic;
+ $('#sd').value=today;$('#sd').min=wkStart(today);$('#sd').max=today;$('#sm').textContent='';$('#sprev').classList.add('hide');upd();$('#dsub').showModal()}
+function upd(){const K=KINDS[curKind],left=Math.max(0,K.max-dq(me.id,$('#sd').value||today,null,curKind));$('#sl').textContent=`Il te reste ${left} ${K.unit} déclarable${left>1?'s':''} ce jour-là.`;$('#sq').max=Math.max(1,left)}
 $('#sd').onchange=upd;
 $('#sp').onchange=e=>{const f=e.target.files[0],i=$('#sprev');if(f){i.src=URL.createObjectURL(f);i.classList.remove('hide')}else i.classList.add('hide')};
 const blobOf=(f,max,q)=>new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=()=>{const im=new Image();im.onerror=rej;im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(),'image/jpeg',q)};im.src=r.result};r.readAsDataURL(f)});
-$('#fs').onsubmit=async e=>{e.preventDefault();const d=$('#sd').value,q=+$('#sq').value,m=$('#sm'),file=$('#sp').files[0];
+$('#fs').onsubmit=async e=>{e.preventDefault();const k=curKind,K=KINDS[k],pic=k==='container',d=$('#sd').value,q=+$('#sq').value,m=$('#sm'),file=$('#sp').files[0],amt=Math.round(+$('#sa').value);
  if(d>today||wkStart(d)!==wkStart(today))return m.textContent='Date invalide : semaine en cours uniquement.';
- if(!file)return m.textContent='Ajoute une photo comme preuve.';
- if(dq(me.id,d)+q>DAY_MAX)return m.textContent=`Limite de ${DAY_MAX} conteneurs par jour dépassée.`;
- if(q<1||q>DAY_MAX)return m.textContent='Quantité invalide.';m.textContent='Envoi en cours…';
- try{const blob=await blobOf(file,1600,.82),path=`${me.id}/${uuid()}.jpg`;
-  const {error:upErr}=await sb.storage.from('proofs').upload(path,blob,{contentType:'image/jpeg',upsert:false});if(upErr)throw upErr;
-  const {error}=await sb.from('submissions').insert({user_id:me.id,work_date:d,quantity:q,photo_path:path,note:$('#sn').value, status:'p'});if(error){await sb.storage.from('proofs').remove([path]);throw error}
+ if(pic&&!file)return m.textContent='Ajoute une photo comme preuve.';
+ if(!pic&&!(amt>0))return m.textContent='Entre le montant récolté.';
+ if(dq(me.id,d,null,k)+q>K.max)return m.textContent=`Limite de ${K.max} ${K.unit} par jour dépassée.`;
+ if(q<1||q>K.max)return m.textContent='Quantité invalide.';m.textContent='Envoi en cours…';
+ let path=null;
+ try{if(pic){const blob=await blobOf(file,1600,.82);path=`${me.id}/${uuid()}.jpg`;
+   const {error:upErr}=await sb.storage.from('proofs').upload(path,blob,{contentType:'image/jpeg',upsert:false});if(upErr)throw upErr}
+  const row={user_id:me.id,work_date:d,quantity:q,photo_path:path,note:$('#sn').value,status:'p',kind:k};if(!pic)row.amount=amt;
+  const {error}=await sb.from('submissions').insert(row);if(error){if(path)await sb.storage.from('proofs').remove([path]);throw error}
   $('#dsub').close();weekOff=0;await loadData();render();
- }catch(x){console.error(x);m.textContent='Envoi impossible. Vérifie les droits Storage et les règles RLS.'}};
+ }catch(x){console.error(x);m.textContent=pic?'Envoi impossible. Vérifie les droits Storage et les règles RLS.':'Envoi impossible : '+(x.message||'vérifie la migration SQL ATM/Supérettes.')}};
 </script>
 </body>
 </html>
