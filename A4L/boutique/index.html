@@ -1,0 +1,1319 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vory V — Boutique</title>
+<style>
+:root{--bg:#0e1628;--panel:#121a2d;--purple:#9333ea;--pink:#ff3f68;--orange:#f97316;--text:#f8fafc;--muted:#aab4c7;--line:rgba(255,255,255,.09)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 4%,rgba(147,51,234,.15),transparent 25%),var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial}
+a{text-decoration:none;color:inherit}button,input{font:inherit}.container{width:min(1380px,calc(100% - 34px));margin:auto}
+header{position:sticky;top:0;z-index:20;background:rgba(10,17,32,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{font-weight:950}.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button,.back{border:0;background:transparent;color:#cbd5e1;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:850;cursor:pointer}.tabs button.active,.tabs button:hover{background:rgba(255,255,255,.06);color:#fff}.back{border:1px solid var(--line)}
+.hero{padding:58px 0 28px}.hero small{color:#c4b5fd;font-weight:950;letter-spacing:.16em;text-transform:uppercase}.hero h1{font-size:clamp(42px,6vw,68px);margin:8px 0 12px}.hero p{color:var(--muted);max-width:760px;line-height:1.7}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:22px;align-items:start;padding-bottom:80px}.toolbar{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:17px}.toolbar h2{margin:0}
+.search{background:#0b1222;color:#fff;border:1px solid var(--line);border-radius:999px;padding:11px 15px;outline:none}.panel{display:none}.panel.active{display:block}.products{display:grid;grid-template-columns:repeat(3,1fr);column-gap:15px;row-gap:26px;padding-top:8px}
+.shop-category{margin-bottom:34px}
+.shop-category:last-child{margin-bottom:0}
+.shop-category-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 13px}
+.shop-category-head h3{margin:0;font-size:21px}
+.shop-category-head span{color:var(--muted);font-size:12px}
+.card{position:relative;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;overflow:visible}.img{height:155px;background:#0b1222;display:grid;place-items:center;color:#64748b;font-size:12px;font-weight:800;overflow:hidden;border-radius:17px 17px 0 0}.img img{width:100%;height:100%;object-fit:contain;padding:12px}.body{padding:15px}.cat{color:#a78bfa;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em}.body h3{margin:6px 0}.body p{color:var(--muted);font-size:12px;min-height:35px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.price{font-size:19px;font-weight:950}.add,.primary{border:0;border-radius:10px;padding:9px 11px;background:linear-gradient(100deg,var(--purple),var(--pink));color:#fff;font-weight:900;cursor:pointer}
+.cart{position:sticky;top:94px;background:#0d1322;border:1px solid var(--line);border-radius:20px;padding:18px}.carthead{display:flex;justify-content:space-between;align-items:center}.carthead h2{margin:0}.count{background:var(--orange);color:#111;min-width:30px;height:30px;border-radius:999px;display:grid;place-items:center;font-weight:950}
+.items{display:grid;gap:8px;margin:15px 0;max-height:300px;overflow:auto}.empty{color:var(--muted);font-size:13px;text-align:center;padding:18px}.item{background:#0b1222;border:1px solid var(--line);border-radius:11px;padding:10px}.itemtop{display:flex;justify-content:space-between;font-size:13px;font-weight:850}.qty{display:flex;gap:7px;align-items:center;margin-top:8px}.qty button{width:27px;height:27px;background:#171f34;border:1px solid var(--line);color:#fff;border-radius:7px;cursor:pointer}.remove{margin-left:auto}.total{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:14px;font-size:18px;font-weight:950}.actions{display:grid;gap:9px;margin-top:14px}.secondary{border:1px solid var(--line);border-radius:10px;padding:10px;background:#171f34;color:#fff;font-weight:900;cursor:pointer}.primary{padding:11px}.primary:disabled{opacity:.45}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:40;display:none;place-items:center;padding:18px}.modal.show{display:grid}.box{width:min(520px,100%);background:#111a2e;border:1px solid var(--line);border-radius:20px;padding:21px}.order-box{width:min(900px,100%)}.boxtop{display:flex;justify-content:space-between;align-items:center}.boxtop h2{margin:0}.close{border:0;background:none;color:#aaa;font-size:25px;cursor:pointer}.order-columns{display:grid;grid-template-columns:minmax(0,.9fr) 1px minmax(0,1.1fr);gap:24px;margin-top:18px;align-items:start}.order-separator{width:1px;background:var(--line);height:100%;min-height:330px}.order-list-title{margin:0 0 12px;font-size:16px}.order-list-panel{display:grid;gap:8px;max-height:330px;overflow:auto;padding-right:4px}.order-list-item{background:#0b1222;border:1px solid var(--line);border-radius:10px;padding:10px}.order-list-item-top{display:flex;justify-content:space-between;gap:12px;font-size:13px;font-weight:850}.order-list-item small{display:block;color:var(--muted);margin-top:5px}.field{display:grid;gap:6px;margin-top:12px}.field:first-child{margin-top:0}.field label{font-size:12px;font-weight:850}.field input{background:#0b1222;color:#fff;border:1px solid var(--line);border-radius:10px;padding:11px}.msg{font-size:12px;min-height:18px;margin-top:8px}.ok{color:#86efac}.err{color:#fca5a5}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}.cart{position:static}.products{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.order-columns{grid-template-columns:1fr}.order-separator{display:none}}@media(max-width:650px){.products{grid-template-columns:1fr}.nav,.toolbar{align-items:flex-start;flex-direction:column}.search{width:100%}}
+
+.category-picker{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:9px;
+  margin-bottom:18px;
+}
+.category-btn{
+  border:1px solid var(--line);
+  background:#0b1222;
+  color:#cbd5e1;
+  border-radius:12px;
+  padding:12px 9px;
+  cursor:pointer;
+  font-weight:900;
+  transition:.15s;
+}
+.category-btn:hover{
+  border-color:rgba(147,51,234,.55);
+  background:#151d31;
+  color:#fff;
+}
+.category-btn.active{
+  background:linear-gradient(100deg,rgba(147,51,234,.22),rgba(255,63,104,.16));
+  border-color:rgba(168,85,247,.65);
+  color:#fff;
+}
+.category-content-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:12px;
+  margin:0 0 13px;
+}
+.category-content-head h3{margin:0;font-size:22px}
+.weapon-select{
+  border:0;border-radius:10px;padding:9px 11px;
+  background:linear-gradient(100deg,var(--purple),var(--pink));
+  color:#fff;font-weight:900;cursor:pointer;
+}
+.weapon-box{width:min(820px,100%)}
+.weapon-info{
+  display:grid;
+  grid-template-columns:180px 1fr;
+  gap:18px;
+  align-items:start;
+  margin-top:16px;
+}
+.weapon-preview{
+  min-height:180px;
+  height:180px;
+  background:#0b1222;
+  border:1px solid var(--line);
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:#64748b;
+  font-size:12px;
+  font-weight:800;
+  overflow:hidden;
+}
+.weapon-preview img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  padding:14px;
+}
+.weapon-details h3{margin:0 0 6px}
+.compat-title{margin:22px 0 10px;font-size:16px}
+.compat-list{display:grid;gap:9px}
+.compat-item{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:#0b1222;border:1px solid var(--line);border-radius:11px;padding:11px;
+}
+.compat-thumb{width:54px;height:54px;flex:none;border-radius:9px;overflow:hidden;background:#111a2e;border:1px solid var(--line);display:grid;place-items:center}
+.compat-thumb img{width:100%;height:100%;object-fit:contain;padding:5px}
+.compat-info{display:flex;align-items:center;gap:10px;min-width:0}
+.compat-item strong{display:block}
+.compat-item small{display:block;color:var(--muted);margin-top:3px}
+@media(max-width:900px){.category-picker{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:650px){
+  .category-picker{grid-template-columns:repeat(2,1fr)}
+  .weapon-info{grid-template-columns:1fr}
+}
+
+
+.product-gallery{
+  position:relative;
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+}
+.product-gallery img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  padding:12px;
+}
+.gallery-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:2;
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(5,10,20,.72);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  font-size:18px;
+  font-weight:950;
+  backdrop-filter:blur(6px);
+}
+.gallery-arrow:hover{background:rgba(147,51,234,.85)}
+.gallery-arrow.prev{left:8px}
+.gallery-arrow.next{right:8px}
+.gallery-counter{
+  position:absolute;
+  left:50%;
+  bottom:7px;
+  transform:translateX(-50%);
+  z-index:2;
+  padding:3px 7px;
+  border-radius:999px;
+  background:rgba(5,10,20,.72);
+  color:#cbd5e1;
+  font-size:10px;
+  font-weight:900;
+}
+.weapon-preview .gallery-arrow{width:36px;height:36px}
+.weapon-preview .gallery-arrow.prev{left:10px}
+.weapon-preview .gallery-arrow.next{right:10px}
+
+
+.admin-shop-btn{
+  display:none;
+  border:1px solid rgba(249,115,22,.45);
+  background:rgba(249,115,22,.10);
+  color:#fdba74;
+  padding:10px 12px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:900;
+  cursor:pointer;
+}
+.admin-shop-btn:hover{background:rgba(249,115,22,.18);color:#fff}
+.product-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px}
+.card > .product-badges{
+  position:absolute;
+  top:0;
+  left:14px;
+  z-index:6;
+  margin:0;
+  transform:translateY(-52%);
+}
+.product-badge{
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:9px;
+  font-weight:950;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  box-shadow:0 6px 16px rgba(0,0,0,.24);
+  backdrop-filter:blur(8px);
+}
+.badge-stock{background:rgba(239,68,68,.13);color:#fca5a5;border:1px solid rgba(239,68,68,.25)}
+.badge-best{background:rgba(234,179,8,.13);color:#fde68a;border:1px solid rgba(234,179,8,.25)}
+.badge-sale{background:rgba(34,197,94,.13);color:#86efac;border:1px solid rgba(34,197,94,.25)}
+.price-stack{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+.old-price{font-size:12px;color:#7f8ba3;text-decoration:line-through;font-weight:800}
+.sale-price{color:#86efac}
+.product-action{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+  flex-wrap:wrap;
+}
+.discount-action-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:31px;
+  padding:6px 9px;
+  border-radius:9px;
+  border:1px solid rgba(34,197,94,.30);
+  background:rgba(34,197,94,.12);
+  color:#86efac;
+  font-size:10px;
+  font-weight:950;
+  white-space:nowrap;
+}
+.add:disabled{
+  background:#252b3a;
+  color:#7f8ba3;
+  cursor:not-allowed;
+  opacity:.72;
+}
+.admin-shop-box{width:min(1050px,100%)}
+.admin-shop-note{color:var(--muted);font-size:12px;line-height:1.55;margin-top:7px}
+.admin-products{
+  display:grid;
+  gap:8px;
+  max-height:58vh;
+  overflow:auto;
+  margin-top:18px;
+  padding-right:4px;
+}
+.admin-product-row{
+  display:grid;
+  grid-template-columns:minmax(180px,1.5fr) 130px 145px 150px;
+  gap:12px;
+  align-items:center;
+  background:#0b1222;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:11px;
+}
+.admin-product-name b{display:block}
+.admin-product-name small{display:block;color:var(--muted);margin-top:3px}
+.admin-toggle{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:850}
+.admin-toggle input{width:17px;height:17px;accent-color:var(--purple)}
+.admin-discount{display:grid;gap:5px}
+.admin-discount label{font-size:10px;color:var(--muted);font-weight:850}
+.admin-discount input{
+  width:100%;
+  background:#111a2e;
+  color:#fff;
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:9px;
+  outline:none;
+}
+.admin-shop-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:15px}
+@media(max-width:760px){
+  .admin-product-row{grid-template-columns:1fr 1fr}
+  .admin-product-name{grid-column:1/-1}
+}
+
+
+.admin-shop-btn.active{
+  background:linear-gradient(100deg,var(--orange),#fb923c);
+  border-color:transparent;
+  color:#111827;
+}
+.admin-mode-banner{
+  display:none;
+  margin:-4px 0 17px;
+  padding:12px 14px;
+  border:1px solid rgba(249,115,22,.34);
+  background:rgba(249,115,22,.08);
+  border-radius:13px;
+  color:#fdba74;
+  font-size:12px;
+  font-weight:850;
+}
+.admin-mode-banner.show{display:flex;align-items:center;gap:9px}
+.card.admin-editable{
+  border-color:rgba(249,115,22,.5);
+  box-shadow:0 0 0 1px rgba(249,115,22,.08),0 12px 35px rgba(0,0,0,.18);
+  cursor:pointer;
+  position:relative;
+}
+.card.admin-editable:hover{
+  transform:translateY(-2px);
+  border-color:var(--orange);
+}
+.admin-card-hint{
+  position:absolute;
+  z-index:4;
+  top:9px;
+  right:9px;
+  padding:5px 8px;
+  border-radius:999px;
+  background:rgba(249,115,22,.92);
+  color:#111827;
+  font-size:9px;
+  font-weight:950;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  pointer-events:none;
+}
+.admin-product-box{width:min(820px,100%)}
+.admin-edit-layout{
+  display:grid;
+  grid-template-columns:220px minmax(0,1fr);
+  gap:20px;
+  margin-top:18px;
+}
+.admin-edit-preview{
+  height:210px;
+  border-radius:15px;
+  border:1px solid var(--line);
+  background:#0b1222;
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+}
+.admin-edit-preview .product-gallery{height:100%}
+.admin-edit-main{display:grid;gap:14px}
+.admin-edit-title h3{margin:0 0 5px;font-size:22px}
+.admin-edit-title small{color:var(--muted)}
+.admin-edit-section{
+  background:#0b1222;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:13px;
+}
+.admin-edit-section h4{margin:0 0 11px;font-size:13px}
+.admin-switches{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.admin-switch{
+  display:flex;
+  gap:9px;
+  align-items:center;
+  min-height:48px;
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#111a2e;
+  font-size:12px;
+  font-weight:850;
+}
+.admin-switch input{width:18px;height:18px;accent-color:var(--orange)}
+.admin-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.admin-edit-field{display:grid;gap:6px}
+.admin-edit-field label{font-size:10px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+.admin-edit-field input{
+  width:100%;
+  background:#111a2e;
+  color:#fff;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px;
+  outline:none;
+}
+.admin-edit-field input:focus{border-color:var(--orange)}
+.admin-time-presets{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.admin-time-btn{
+  border:1px solid var(--line);
+  background:#171f34;
+  color:#cbd5e1;
+  border-radius:9px;
+  padding:7px 9px;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:900;
+}
+.admin-time-btn:hover{border-color:var(--orange);color:#fff}
+.admin-price-preview{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+}
+.admin-price-preview span{color:var(--muted);font-size:11px}
+.admin-price-preview b{font-size:19px}
+.sale-end-label{
+  color:#86efac;
+  font-size:10px;
+  font-weight:850;
+  margin-top:5px;
+}
+.sale-expired-label{
+  color:#fca5a5;
+  font-size:10px;
+  font-weight:850;
+  margin-top:5px;
+}
+@media(max-width:700px){
+  .admin-edit-layout{grid-template-columns:1fr}
+  .admin-edit-preview{height:190px}
+  .admin-edit-grid,.admin-switches{grid-template-columns:1fr}
+}
+
+</style></head><body>
+<header><div class="container nav"><a class="brand" href="/A-4-L/">Vory V Industry — Boutique</a><div class="tabs"><button class="tab active" data-tab="shop">Boutique</button><button class="tab" data-tab="packs">Les packs</button><button class="admin-shop-btn" id="adminShopBtn">⚙ Admin Boutique</button><a class="back" href="/A-4-L/">← Site principal</a></div></div></header>
+<main class="container"><section class="hero"><small>Vory V Industry</small><h1>La boutique.</h1><p>Choisis tes produits, règle les quantités puis envoie ta demande directement à l'équipe Vory V.</p></section>
+<div class="layout"><section><div class="toolbar"><h2 id="title">Boutique</h2><input id="search" class="search" placeholder="Rechercher..."></div>
+<div class="admin-mode-banner" id="adminModeBanner">⚙ Mode administrateur activé — clique directement sur un produit pour le modifier.</div>
+<div class="panel active" id="shop">
+  <div class="category-picker" id="categoryPicker"></div>
+  <div id="categoryProducts"></div>
+</div>
+<div class="panel" id="packs"><div class="products" id="packProducts"></div></div></section>
+<aside class="cart"><div class="carthead"><h2>Mes achats</h2><span class="count" id="count">0</span></div><div class="items" id="cart"></div><div class="total"><span>Total</span><span id="total">0 $</span></div><div class="actions"><button class="secondary" id="list">Liste de nos achats</button><button class="primary" id="order" disabled>Passer commande</button></div></aside></div></main>
+<div class="modal" id="orderModal">
+  <div class="box order-box">
+    <div class="boxtop">
+      <h2>Passer commande</h2>
+      <button class="close" data-close="orderModal">×</button>
+    </div>
+
+    <div class="order-columns">
+      <div>
+        <h3 class="order-list-title">Votre liste d’achat</h3>
+        <div class="order-list-panel" id="orderPurchaseList"></div>
+      </div>
+
+      <div class="order-separator"></div>
+
+      <div>
+        <div class="field">
+          <label>Nom RP</label>
+          <input id="rpName" placeholder="Ex : Jean Pascal" autocomplete="off">
+          <div style="color:#7f8ba3;font-size:10px;line-height:1.45;margin-top:2px">
+            Si vous possédez un compte chez nous, saisissez votre nom RP puis appuyez sur Entrée pour remplir automatiquement vos informations.
+          </div>
+          <div class="msg" id="profileLookup"></div>
+        </div>
+
+        <div class="field">
+          <label>Numéro RP</label>
+          <input id="rpNumber" placeholder="00-00-00-00-00">
+        </div>
+
+        <div class="field">
+          <label>Mail RP</label>
+          <input id="rpEmail" type="email" placeholder="exemple@a4l.fr">
+        </div>
+
+        <div class="field">
+          <label>Prix de la commande</label>
+          <input id="orderPrice" readonly>
+        </div>
+
+        <div class="msg" id="msg"></div>
+        <button class="primary" style="width:100%;margin-top:4px" id="send">Envoyer la demande</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="weaponModal">
+  <div class="box weapon-box">
+    <div class="boxtop">
+      <h2>Choisir une arme</h2>
+      <button class="close" data-close="weaponModal">×</button>
+    </div>
+    <div id="weaponModalContent"></div>
+  </div>
+</div>
+
+
+<div class="modal" id="adminProductModal">
+  <div class="box admin-product-box">
+    <div class="boxtop">
+      <div>
+        <h2>Modifier le produit</h2>
+        <div class="admin-shop-note">Les changements sont appliqués immédiatement à la boutique.</div>
+      </div>
+      <button class="close" data-close="adminProductModal">×</button>
+    </div>
+
+    <div class="admin-edit-layout">
+      <div class="admin-edit-preview" id="adminEditPreview"></div>
+
+      <div class="admin-edit-main">
+        <div class="admin-edit-title">
+          <h3 id="adminEditName">—</h3>
+          <small id="adminEditMeta">—</small>
+        </div>
+
+        <div class="admin-edit-section">
+          <h4>État du produit</h4>
+          <div class="admin-switches">
+            <label class="admin-switch">
+              <input type="checkbox" id="adminOutOfStock">
+              <span>🚫 Rupture de stock</span>
+            </label>
+
+            <label class="admin-switch">
+              <input type="checkbox" id="adminBestBuy">
+              <span>⭐ Meilleur achat</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="admin-edit-section">
+          <h4>Promotion</h4>
+
+          <div class="admin-edit-grid">
+            <div class="admin-edit-field">
+              <label>Réduction (%)</label>
+              <input id="adminDiscount" type="number" min="0" max="100" step="1" value="0">
+            </div>
+
+            <div class="admin-edit-field">
+              <label>Fin de la réduction</label>
+              <input id="adminDiscountEnd" type="datetime-local">
+            </div>
+          </div>
+
+          <div class="admin-time-presets">
+            <button class="admin-time-btn" type="button" data-sale-duration="1">+ 1 jour</button>
+            <button class="admin-time-btn" type="button" data-sale-duration="3">+ 3 jours</button>
+            <button class="admin-time-btn" type="button" data-sale-duration="7">+ 1 semaine</button>
+            <button class="admin-time-btn" type="button" data-sale-duration="0">Sans limite</button>
+          </div>
+
+          <div class="admin-price-preview">
+            <span>Aperçu du prix client</span>
+            <b id="adminPricePreview">0 $</b>
+          </div>
+        </div>
+
+        <div class="msg" id="adminEditMsg"></div>
+
+        <div class="admin-shop-actions">
+          <button class="secondary" data-close="adminProductModal">Annuler</button>
+          <button class="primary" id="saveAdminProduct">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="listModal"><div class="box"><div class="boxtop"><h2>Liste de nos achats</h2><button class="close" data-close="listModal">×</button></div><div class="items" id="listItems"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../database.js"></script>
+<script>
+const db=(window.vorySupabaseConfigured&&window.vorySupabaseConfigured())
+  ? window.supabase.createClient(window.VORY_SUPABASE_URL,window.VORY_SUPABASE_KEY)
+  : null;
+
+const SHOP_IMAGE_BUCKET='Boutique Images';
+
+function shopImageUrl(file=''){
+  const value=String(file||'').trim();
+
+  if(!value || !db) return '';
+  if(/^https?:\/\//i.test(value)) return value;
+
+  const {data}=db.storage
+    .from(SHOP_IMAGE_BUCKET)
+    .getPublicUrl(value);
+
+  return data?.publicUrl||'';
+}
+
+function productImages(p){
+  if(Array.isArray(p?.images) && p.images.length){
+    return p.images;
+  }
+
+  if(p?.image){
+    return [p.image];
+  }
+
+  return [];
+}
+
+function productGallery(p,context='card'){
+  const images=productImages(p);
+  const galleryId=(context+'-'+String(p?.id||Math.random())).replace(/[^a-zA-Z0-9_-]/g,'_');
+
+  if(!images.length){
+    return `<span>Image ${p?.name||'produit'}</span>`;
+  }
+
+  const firstUrl=shopImageUrl(images[0]);
+
+  if(!firstUrl){
+    return `<span>Image ${p?.name||'produit'}</span>`;
+  }
+
+  return `
+    <div class="product-gallery"
+         data-gallery-id="${galleryId}"
+         data-images="${escAttr(JSON.stringify(images))}"
+         data-index="0">
+      <img src="${escAttr(firstUrl)}" alt="${escAttr(p?.name||'Produit')}">
+      ${images.length>1 ? `
+        <button class="gallery-arrow prev" type="button" data-gallery-action="prev" aria-label="Image précédente">‹</button>
+        <button class="gallery-arrow next" type="button" data-gallery-action="next" aria-label="Image suivante">›</button>
+        <div class="gallery-counter">1 / ${images.length}</div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function changeGalleryImage(gallery,direction){
+  if(!gallery)return;
+
+  let images=[];
+  try{
+    images=JSON.parse(gallery.dataset.images||'[]');
+  }catch{
+    images=[];
+  }
+
+  if(images.length<2)return;
+
+  let index=Number(gallery.dataset.index||0);
+
+  if(direction==='next'){
+    index=(index+1)%images.length;
+  }else{
+    index=(index-1+images.length)%images.length;
+  }
+
+  gallery.dataset.index=String(index);
+
+  const img=gallery.querySelector('img');
+  if(img){
+    img.src=shopImageUrl(images[index]);
+  }
+
+  const counter=gallery.querySelector('.gallery-counter');
+  if(counter){
+    counter.textContent=(index+1)+' / '+images.length;
+  }
+}
+
+const $=id=>document.getElementById(id);
+const money=n=>Number(n||0).toLocaleString('fr-FR')+' $';
+let cart=[];
+const sum=()=>cart.reduce((s,i)=>s+i.price*i.quantity,0);
+
+let PRODUCT_SETTINGS={};
+let shopAdminUser=null;
+let shopAdminProfile=null;
+let ADMIN_MODE=false;
+let ADMIN_EDIT_PRODUCT=null;
+
+function getProductSetting(productId){
+  return PRODUCT_SETTINGS[String(productId)]||{
+    out_of_stock:false,
+    best_buy:false,
+    discount_percent:0,
+    discount_ends_at:null
+  };
+}
+
+function discountIsActive(setting){
+  const discount=Number(setting?.discount_percent||0);
+  if(discount<=0)return false;
+
+  if(!setting?.discount_ends_at)return true;
+
+  return new Date(setting.discount_ends_at).getTime()>Date.now();
+}
+
+function effectivePrice(p){
+  const setting=getProductSetting(p.id);
+  const discount=discountIsActive(setting)
+    ? Math.min(100,Math.max(0,Number(setting.discount_percent||0)))
+    : 0;
+
+  return Number(p.price||0)*(1-discount/100);
+}
+
+function saleTimeText(dateValue){
+  if(!dateValue)return '';
+
+  const end=new Date(dateValue).getTime();
+  const diff=end-Date.now();
+
+  if(diff<=0)return 'Promotion terminée';
+
+  const hours=Math.ceil(diff/3600000);
+
+  if(hours<24)return `Se termine dans ${hours}h`;
+
+  const days=Math.ceil(hours/24);
+  return `Se termine dans ${days} jour${days>1?'s':''}`;
+}
+
+function productBadges(p){
+  const setting=getProductSetting(p.id);
+  const badges=[];
+
+  if(setting.out_of_stock){
+    badges.push('<span class="product-badge badge-stock">Rupture de stock</span>');
+  }
+
+  if(setting.best_buy){
+    badges.push('<span class="product-badge badge-best">★ Meilleur achat</span>');
+  }
+
+  return badges.length
+    ? `<div class="product-badges">${badges.join('')}</div>`
+    : '';
+}
+
+function productDiscountActionBadge(p){
+  const setting=getProductSetting(p.id);
+
+  if(!discountIsActive(setting)){
+    return '';
+  }
+
+  const discount=Number(setting.discount_percent||0)
+    .toLocaleString('fr-FR',{maximumFractionDigits:2});
+
+  return `<span class="discount-action-badge">-${discount}%</span>`;
+}
+
+function productSaleEndHtml(p){
+  const setting=getProductSetting(p.id);
+
+  if(!setting.discount_ends_at || Number(setting.discount_percent||0)<=0){
+    return '';
+  }
+
+  if(discountIsActive(setting)){
+    return `<div class="sale-end-label">⏱ ${saleTimeText(setting.discount_ends_at)}</div>`;
+  }
+
+  if(ADMIN_MODE && shopAdminProfile?.role==='admin'){
+    return '<div class="sale-expired-label">Promotion expirée</div>';
+  }
+
+  return '';
+}
+
+function productPriceHtml(p,small=false){
+  const setting=getProductSetting(p.id);
+  const active=discountIsActive(setting);
+  const finalPrice=effectivePrice(p);
+
+  if(active){
+    return `<div>
+      <div class="price-stack">
+        <span class="old-price">${money(p.price)}</span>
+        <span class="price sale-price" ${small?'style="font-size:16px"':''}>${money(finalPrice)}</span>
+      </div>
+      ${productSaleEndHtml(p)}
+    </div>`;
+  }
+
+  return `<div>
+    <span class="price" ${small?'style="font-size:16px"':''}>${money(p.price)}</span>
+    ${productSaleEndHtml(p)}
+  </div>`;
+}
+
+async function loadProductSettings(){
+  PRODUCT_SETTINGS={};
+
+  if(!db)return;
+
+  const {data,error}=await db
+    .from('shop_product_settings')
+    .select('product_id,out_of_stock,best_buy,discount_percent,discount_ends_at');
+
+  if(error){
+    console.warn('Réglages boutique :',error.message);
+    return;
+  }
+
+  (data||[]).forEach(row=>{
+    PRODUCT_SETTINGS[String(row.product_id)]=row;
+  });
+}
+
+async function initShopAdmin(){
+  if(!db)return;
+
+  const {data:{session}}=await db.auth.getSession();
+  shopAdminUser=session?.user||null;
+
+  if(!shopAdminUser)return;
+
+  const {data:profile,error}=await db
+    .from('profiles')
+    .select('role')
+    .eq('id',shopAdminUser.id)
+    .maybeSingle();
+
+  if(error||profile?.role!=='admin')return;
+
+  shopAdminProfile=profile;
+  $('adminShopBtn').style.display='inline-flex';
+  $('adminShopBtn').textContent='⚙ Activer le mode Admin';
+}
+
+function formatDateTimeLocal(value){
+  if(!value)return '';
+
+  const d=new Date(value);
+  if(Number.isNaN(d.getTime()))return '';
+
+  const pad=n=>String(n).padStart(2,'0');
+
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function setAdminMode(enabled){
+  if(shopAdminProfile?.role!=='admin')return;
+
+  ADMIN_MODE=enabled===true;
+
+  $('adminShopBtn').classList.toggle('active',ADMIN_MODE);
+  $('adminShopBtn').textContent=ADMIN_MODE
+    ? '✓ Mode Admin activé'
+    : '⚙ Activer le mode Admin';
+
+  $('adminModeBanner').classList.toggle('show',ADMIN_MODE);
+
+  renderCategoryProducts();
+  $('packProducts').innerHTML=catalog.packs.map(productCard).join('');
+}
+
+function updateAdminPricePreview(){
+  if(!ADMIN_EDIT_PRODUCT)return;
+
+  const discount=Math.min(100,Math.max(0,Number($('adminDiscount').value||0)));
+  const base=Number(ADMIN_EDIT_PRODUCT.price||0);
+  const result=base*(1-discount/100);
+
+  $('adminPricePreview').textContent=money(result);
+}
+
+function setAdminSaleDuration(days){
+  if(Number(days)===0){
+    $('adminDiscountEnd').value='';
+    return;
+  }
+
+  const d=new Date();
+  d.setDate(d.getDate()+Number(days));
+
+  $('adminDiscountEnd').value=formatDateTimeLocal(d);
+}
+
+function openAdminProduct(productId){
+  if(!ADMIN_MODE || shopAdminProfile?.role!=='admin')return;
+
+  const product=allProducts().find(p=>String(p.id)===String(productId));
+  if(!product)return;
+
+  ADMIN_EDIT_PRODUCT=product;
+
+  const setting=getProductSetting(product.id);
+
+  $('adminEditPreview').innerHTML=productGallery(product,'admin');
+  $('adminEditName').textContent=product.name;
+  $('adminEditMeta').textContent=`${product.category} · Prix normal : ${money(product.price)}`;
+
+  $('adminOutOfStock').checked=setting.out_of_stock===true;
+  $('adminBestBuy').checked=setting.best_buy===true;
+  $('adminDiscount').value=Number(setting.discount_percent||0);
+  $('adminDiscountEnd').value=formatDateTimeLocal(setting.discount_ends_at);
+
+  $('adminEditMsg').textContent='';
+
+  updateAdminPricePreview();
+  show('adminProductModal');
+}
+
+async function saveAdminProduct(){
+  if(!ADMIN_EDIT_PRODUCT || !shopAdminUser || shopAdminProfile?.role!=='admin'){
+    return;
+  }
+
+  const discount=Math.min(100,Math.max(0,Number($('adminDiscount').value||0)));
+
+  let discountEnd=null;
+
+  if(discount>0 && $('adminDiscountEnd').value){
+    discountEnd=new Date($('adminDiscountEnd').value).toISOString();
+  }
+
+  const payload={
+    product_id:String(ADMIN_EDIT_PRODUCT.id),
+    out_of_stock:$('adminOutOfStock').checked===true,
+    best_buy:$('adminBestBuy').checked===true,
+    discount_percent:discount,
+    discount_ends_at:discount>0 ? discountEnd : null,
+    updated_at:new Date().toISOString(),
+    updated_by:shopAdminUser.id
+  };
+
+  $('saveAdminProduct').disabled=true;
+  $('adminEditMsg').className='msg';
+  $('adminEditMsg').textContent='Enregistrement...';
+
+  const {error}=await db
+    .from('shop_product_settings')
+    .upsert(payload,{onConflict:'product_id'});
+
+  $('saveAdminProduct').disabled=false;
+
+  if(error){
+    $('adminEditMsg').className='msg err';
+    $('adminEditMsg').textContent='Erreur : '+error.message;
+    return;
+  }
+
+  await loadProductSettings();
+
+  renderCategoryProducts();
+  $('packProducts').innerHTML=catalog.packs.map(productCard).join('');
+
+  $('adminEditMsg').className='msg ok';
+  $('adminEditMsg').textContent='Produit mis à jour ✓';
+
+  setTimeout(()=>hide('adminProductModal'),650);
+}
+
+const catalog={
+  categories:{
+    'Arme':[
+      {
+        id:'arme_1',
+        category:'Arme',
+        name:'Arme 1',
+        images:['armes/arme_1_1.png','armes/arme_1_2.png','armes/arme_1_3.png'],
+        description:'Arme à personnaliser.',
+        price:0,
+        compatibleMagazines:['chargeur_1','chargeur_2']
+      },
+      {
+        id:'arme_2',
+        category:'Arme',
+        name:'Arme 2',
+        image:'armes/arme_2.png',
+        description:'Arme à personnaliser.',
+        price:0,
+        compatibleMagazines:['chargeur_2','chargeur_3']
+      },
+      {
+        id:'arme_3',
+        category:'Arme',
+        name:'Arme 3',
+        image:'armes/arme_3.png',
+        description:'Arme à personnaliser.',
+        price:0,
+        compatibleMagazines:['chargeur_1','chargeur_3']
+      }
+    ],
+
+    'Munition':[
+      {id:'chargeur_1',category:'Munition',name:'Chargeur 1',image:'munitions/chargeur_1.png',description:'Chargeur / munition à personnaliser.',price:0},
+      {id:'chargeur_2',category:'Munition',name:'Chargeur 2',image:'munitions/chargeur_2.png',description:'Chargeur / munition à personnaliser.',price:0},
+      {id:'chargeur_3',category:'Munition',name:'Chargeur 3',image:'munitions/chargeur_3.png',description:'Chargeur / munition à personnaliser.',price:0}
+    ],
+
+    'Viseur':[
+      {id:'viseur_1',category:'Viseur',name:'Viseur 1',image:'viseurs/viseur_1.png',description:'Produit à personnaliser.',price:0},
+      {id:'viseur_2',category:'Viseur',name:'Viseur 2',image:'viseurs/viseur_2.png',description:'Produit à personnaliser.',price:0},
+      {id:'viseur_3',category:'Viseur',name:'Viseur 3',image:'viseurs/viseur_3.png',description:'Produit à personnaliser.',price:0}
+    ],
+
+    'Grenade':[
+      {id:'grenade_1',category:'Grenade',name:'Grenade 1',image:'grenades/grenade_1.png',description:'Produit à personnaliser.',price:0},
+      {id:'grenade_2',category:'Grenade',name:'Grenade 2',image:'grenades/grenade_2.png',description:'Produit à personnaliser.',price:0},
+      {id:'grenade_3',category:'Grenade',name:'Grenade 3',image:'grenades/grenade_3.png',description:'Produit à personnaliser.',price:0}
+    ],
+
+    'Drogue':[
+      {id:'drogue_1',category:'Drogue',name:'Drogue 1',image:'drogues/drogue_1.png',description:'Produit à personnaliser.',price:0},
+      {id:'drogue_2',category:'Drogue',name:'Drogue 2',image:'drogues/drogue_2.png',description:'Produit à personnaliser.',price:0},
+      {id:'drogue_3',category:'Drogue',name:'Drogue 3',image:'drogues/drogue_3.png',description:'Produit à personnaliser.',price:0}
+    ]
+  },
+
+  packs:[
+    {id:'pack_1',category:'Pack',name:'KIT 1',image:'packs/kit_1.png',description:'Pack à personnaliser.',price:0},
+    {id:'pack_2',category:'Pack',name:'KIT 2',image:'packs/kit_2.png',description:'Pack à personnaliser.',price:0}
+  ]
+};
+
+let activeCategory='Arme';
+
+function allProducts(){
+  return [
+    ...Object.values(catalog.categories).flat(),
+    ...catalog.packs
+  ];
+}
+
+function productCard(p){
+  const setting=getProductSetting(p.id);
+  const finalPrice=effectivePrice(p);
+  const adminEditing=ADMIN_MODE && shopAdminProfile?.role==='admin';
+
+  const actionButton=adminEditing
+    ? `<button class="weapon-select" type="button">Modifier</button>`
+    : p.category==='Arme'
+      ? `<button class="weapon-select" data-weapon="${p.id}">Choisir</button>`
+      : `<button class="add" data-name="${escAttr(p.name)}" data-price="${finalPrice}" ${setting.out_of_stock?'disabled':''}>
+           ${setting.out_of_stock?'Rupture':'Ajouter'}
+         </button>`;
+
+  return `<article
+    class="card ${adminEditing?'admin-editable':''}"
+    data-search="${escAttr((p.category+' '+p.name).toLowerCase())}"
+    data-product-id="${escAttr(p.id)}"
+  >
+    ${productBadges(p)}
+    ${adminEditing?'<div class="admin-card-hint">Modifier</div>':''}
+    <div class="img">${productGallery(p,'card')}</div>
+    <div class="body">
+      <div class="cat">${p.category}</div>
+      <h3>${p.name}</h3>
+      <p>${p.description}</p>
+      <div class="row">
+        ${productPriceHtml(p)}
+        <div class="product-action">
+          ${productDiscountActionBadge(p)}
+          ${actionButton}
+        </div>
+      </div>
+    </div>
+  </article>`;
+}
+
+function escAttr(s=''){
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+function renderCategoryPicker(){
+  const picker=$('categoryPicker');
+  picker.innerHTML=Object.keys(catalog.categories).map(category=>`
+    <button class="category-btn ${category===activeCategory?'active':''}" data-category="${category}">
+      ${category}
+    </button>
+  `).join('');
+
+  picker.querySelectorAll('.category-btn').forEach(btn=>{
+    btn.onclick=()=>{
+      activeCategory=btn.dataset.category;
+      renderCategoryPicker();
+      renderCategoryProducts();
+      $('search').value='';
+    };
+  });
+}
+
+function renderCategoryProducts(){
+  const products=catalog.categories[activeCategory]||[];
+
+  $('categoryProducts').innerHTML=`
+    <div class="category-content-head">
+      <div>
+        <h3>${activeCategory}</h3>
+        <div class="muted">${products.length} produit${products.length>1?'s':''}</div>
+      </div>
+    </div>
+    <div class="products">${products.map(productCard).join('')}</div>
+  `;
+}
+
+function openWeapon(weaponId){
+  const weapon=(catalog.categories.Arme||[]).find(p=>p.id===weaponId);
+  if(!weapon)return;
+
+  const weaponSetting=getProductSetting(weapon.id);
+  const magazines=(catalog.categories.Munition||[])
+    .filter(m=>weapon.compatibleMagazines?.includes(m.id));
+
+  $('weaponModalContent').innerHTML=`
+    <div class="weapon-info">
+      <div class="weapon-preview">${productGallery(weapon,'weapon')}</div>
+      <div class="weapon-details">
+        ${productBadges(weapon)}
+        <div class="cat">${weapon.category}</div>
+        <h3>${weapon.name}</h3>
+        <p style="color:var(--muted);line-height:1.55">${weapon.description}</p>
+        <div class="row" style="margin-top:14px">
+          ${productPriceHtml(weapon)}
+          <div class="product-action">
+            ${productDiscountActionBadge(weapon)}
+            <button
+              class="add"
+              data-name="${escAttr(weapon.name)}"
+              data-price="${effectivePrice(weapon)}"
+              ${weaponSetting.out_of_stock?'disabled':''}
+            >${weaponSetting.out_of_stock?'Rupture de stock':"Ajouter l'arme"}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="compat-title">Munitions / chargeurs compatibles</h3>
+
+    <div class="compat-list">
+      ${magazines.length ? magazines.map(m=>{
+        const mSetting=getProductSetting(m.id);
+
+        return `
+          <div class="compat-item">
+            <div class="compat-info">
+              <div class="compat-thumb">${productGallery(m,'magazine')}</div>
+              <div>
+                ${productBadges(m)}
+                <strong>${m.name}</strong>
+                <small>${m.description}</small>
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:10px">
+              ${productPriceHtml(m,true)}
+              ${productDiscountActionBadge(m)}
+              <button
+                class="add"
+                data-name="${escAttr(m.name)}"
+                data-price="${effectivePrice(m)}"
+                ${mSetting.out_of_stock?'disabled':''}
+              >${mSetting.out_of_stock?'Rupture':'Ajouter'}</button>
+            </div>
+          </div>
+        `;
+      }).join('') : '<div class="empty">Aucune munition / aucun chargeur compatible renseigné.</div>'}
+    </div>
+  `;
+
+  show('weaponModal');
+}
+
+
+
+function render(){const box=$('cart');box.innerHTML=cart.length?'':'<div class="empty">Aucun achat ajouté.</div>';cart.forEach((i,n)=>box.insertAdjacentHTML('beforeend',`<div class="item"><div class="itemtop"><span>${i.name}</span><span>${money(i.price*i.quantity)}</span></div><div class="qty"><button data-a="minus" data-i="${n}">−</button><span>${i.quantity}</span><button data-a="plus" data-i="${n}">+</button><button class="remove" data-a="remove" data-i="${n}">×</button></div></div>`));$('count').textContent=cart.reduce((s,i)=>s+i.quantity,0);$('total').textContent=money(sum());$('order').disabled=!cart.length}
+document.addEventListener('click',e=>{
+  if(e.target.matches('[data-gallery-action]')){
+    e.preventDefault();
+    e.stopPropagation();
+
+    const gallery=e.target.closest('.product-gallery');
+    changeGalleryImage(gallery,e.target.dataset.galleryAction);
+    return;
+  }
+
+  if(ADMIN_MODE && shopAdminProfile?.role==='admin'){
+    const card=e.target.closest('.card[data-product-id]');
+
+    if(card){
+      e.preventDefault();
+      openAdminProduct(card.dataset.productId);
+      return;
+    }
+  }
+
+  if(e.target.matches('.weapon-select')){
+    openWeapon(e.target.dataset.weapon);
+    return;
+  }
+
+  if(e.target.matches('.add')){
+    let x=cart.find(i=>i.name===e.target.dataset.name);
+    x?x.quantity++:cart.push({
+      name:e.target.dataset.name,
+      price:+e.target.dataset.price,
+      quantity:1
+    });
+    render();
+  }
+
+  if(e.target.dataset.a){
+    let n=+e.target.dataset.i,a=e.target.dataset.a;
+    if(a==='plus')cart[n].quantity++;
+    if(a==='minus'&&--cart[n].quantity<=0)cart.splice(n,1);
+    if(a==='remove')cart.splice(n,1);
+    render();
+  }
+});
+$('adminShopBtn').onclick=()=>{
+  setAdminMode(!ADMIN_MODE);
+};
+
+$('adminDiscount').addEventListener('input',updateAdminPricePreview);
+
+document.querySelectorAll('[data-sale-duration]').forEach(btn=>{
+  btn.onclick=()=>{
+    setAdminSaleDuration(Number(btn.dataset.saleDuration));
+  };
+});
+
+$('saveAdminProduct').onclick=saveAdminProduct;
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  $(b.dataset.tab).classList.add('active');
+  $('title').textContent=b.textContent;
+  $('search').value='';
+
+  if(b.dataset.tab==='shop'){
+    renderCategoryPicker();
+    renderCategoryProducts();
+  }
+
+  document.querySelectorAll('.card').forEach(c=>c.style.display='');
+});
+$('search').oninput=e=>{
+  const q=e.target.value.toLowerCase();
+
+  document.querySelectorAll('.panel.active .card').forEach(c=>{
+    c.style.display=(c.dataset.search||'').includes(q)?'':'none';
+  });
+};
+function show(id){$(id).classList.add('show')}function hide(id){$(id).classList.remove('show')}document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>hide(b.dataset.close));
+$('list').onclick=()=>{let b=$('listItems');b.innerHTML=cart.length?'':'<div class="empty">Aucun achat.</div>';cart.forEach(i=>b.insertAdjacentHTML('beforeend',`<div class="item"><div class="itemtop"><span>${i.quantity}× ${i.name}</span><span>${money(i.price*i.quantity)}</span></div></div>`));show('listModal')};
+$('order').onclick=()=>{
+  $('orderPrice').value=money(sum());
+  const list=$('orderPurchaseList');
+  list.innerHTML='';
+  cart.forEach(i=>{
+    list.insertAdjacentHTML('beforeend',
+      `<div class="order-list-item">
+        <div class="order-list-item-top">
+          <span>${i.quantity}× ${i.name}</span>
+          <span>${money(i.price*i.quantity)}</span>
+        </div>
+        <small>${money(i.price)} / unité</small>
+      </div>`
+    );
+  });
+  $('msg').textContent='';
+  show('orderModal');
+};
+
+let profileLookupTimer=null;
+
+async function lookupProfileByRpName(){
+  const name=$('rpName').value.trim();
+  const info=$('profileLookup');
+
+  if(!name){
+    info.textContent='';
+    return;
+  }
+
+  if(!db){
+    info.className='msg err';
+    info.textContent='Supabase non configuré.';
+    return;
+  }
+
+  info.className='msg';
+  info.textContent='Recherche du profil...';
+
+  const {data,error}=await db.rpc('get_shop_profile_by_rp_name',{
+    p_rp_name:name
+  });
+
+  const profile=Array.isArray(data)?data[0]:data;
+
+  if(error){
+    console.error('Recherche profil boutique :',error);
+    info.className='msg err';
+    info.textContent='Impossible de rechercher le compte pour le moment.';
+    return;
+  }
+
+  if(!profile){
+    info.className='msg';
+    info.textContent='Aucun compte trouvé — vous pouvez remplir les informations manuellement.';
+    return;
+  }
+
+  $('rpNumber').value=profile.member_number||'';
+  $('rpEmail').value=profile.email||'';
+
+  info.className='msg ok';
+  info.textContent='Compte trouvé ✓ Numéro et mail remplis automatiquement.';
+}
+
+$('rpName').addEventListener('input',()=>{
+  clearTimeout(profileLookupTimer);
+  profileLookupTimer=setTimeout(lookupProfileByRpName,450);
+});
+
+$('rpName').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    e.preventDefault();
+    clearTimeout(profileLookupTimer);
+    lookupProfileByRpName();
+  }
+});
+
+$('send').onclick=async()=>{let name=$('rpName').value.trim(),num=$('rpNumber').value.trim(),email=$('rpEmail').value.trim();if(!name||!num||!email){$('msg').className='msg err';$('msg').textContent='Remplis toutes les informations RP.';return}if(!db){$('msg').className='msg err';$('msg').textContent='Supabase non configuré.';return}$('send').disabled=true;let {error}=await db.from('shop_orders').insert({buyer_name:name,buyer_number:num,buyer_email:email,items:cart,total:sum(),status:'pending'});$('send').disabled=false;if(error){$('msg').className='msg err';$('msg').textContent=error.message;return}$('msg').className='msg ok';$('msg').textContent='Commande envoyée ✓';cart=[];render();setTimeout(()=>hide('orderModal'),1000)};
+(async()=>{
+  await loadProductSettings();
+
+  renderCategoryPicker();
+  renderCategoryProducts();
+  $('packProducts').innerHTML=catalog.packs.map(productCard).join('');
+
+  await initShopAdmin();
+  render();
+})();
+</script></body></html>
