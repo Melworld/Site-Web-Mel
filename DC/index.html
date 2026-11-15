@@ -140,7 +140,7 @@ const ADMIN_MAX=2,DAY_MAX=10,WEEK_MIN=4,D=['Lun','Mar','Mer','Jeu','Ven','Sam','
 const KINDS={
  container:{max:DAY_MAX,chip:'Mes conteneurs',title:'Mes conteneurs',unit:'conteneurs',col:'Conteneurs',tag:'Conteneur',decl:'des conteneurs',q:'Nombre de conteneurs'},
  atm:{max:3,chip:'Mes ATM',title:'Mes ATM',unit:'ATM',col:'ATM',tag:'ATM',decl:'des ATM',q:'Nombre d’ATM'},
- superette:{max:3,chip:'Mes Supérettes',title:'Mes Supérettes',unit:'supérettes',col:'Supérettes',tag:'Supérette',decl:'des supérettes',q:'Nombre de supérettes'}};
+ superette:{max:2,chip:'Mes Supérettes',title:'Mes Supérettes',unit:'supérettes',col:'Supérettes',tag:'Supérette',decl:'des supérettes',q:'Nombre de supérettes'}};
 const COLS=[['Rouge','#ff2447'],['Orange','#ff8a1f'],['Or','#f2b84b'],['Violet','#a855f7'],['Bleu','#3b9bff'],['Vert','#2ed47a']];
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
