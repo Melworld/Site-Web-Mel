@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Vory V — Espace Membre</title><style>
+:root{
+  --bg:#09090b;--panel:#111113;--panel2:#151518;--muted:#8b8b94;--line:#25252b;
+  --accent:#f97316;--accent2:#fb923c;--danger:#7f1d1d;--ok:#166534;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{
+  margin:0;
+  color:#fff;
+  font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 18% 12%,rgba(249,115,22,.16),transparent 30%),
+    radial-gradient(circle at 82% 78%,rgba(249,115,22,.08),transparent 34%),
+    radial-gradient(circle at 55% 42%,rgba(255,255,255,.025),transparent 25%),
+    linear-gradient(135deg,#070708 0%,#0d0d10 48%,#080809 100%);
+  background-attachment:fixed;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+  opacity:.22;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.75),transparent 90%);
+}
+button,input,select,textarea{font:inherit}
+a{color:inherit}
+.hidden{display:none!important}
+.page-shell{max-width:1180px;margin:0 auto;padding:34px 24px 80px}
+.page-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:52px}
+.page-kicker{color:var(--accent);font-size:12px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px}
+.page-top h1{margin:0;font-size:34px;letter-spacing:-.02em}
+.back-link{color:#aaa;text-decoration:none;font-weight:800;margin-top:8px}.back-link:hover{color:#fff}
+.muted{color:var(--muted);font-size:13px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+.btn{border:0;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn.primary{background:var(--accent);color:#111}.btn.primary:hover{background:var(--accent2)}
+.btn.secondary{background:#1b1b1f;color:#fff;border:1px solid #303036}
+.btn.danger{background:#3a1518;color:#fecaca;border:1px solid #5f2227}
+.actions{display:flex;gap:9px;flex-wrap:wrap}
+.row{display:grid;gap:7px;margin-bottom:12px}
+.row label{font-size:13px;font-weight:800;color:#d4d4d8}
+.row input,.row select,.row textarea{width:100%;background:#0c0c0e;color:#fff;border:1px solid var(--line);border-radius:10px;padding:11px;outline:none}
+.row textarea{min-height:85px;resize:vertical}
+.row input:focus,.row select:focus,.row textarea:focus{border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.section-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.section-nav a{padding:9px 12px;border:1px solid var(--line);border-radius:9px;color:#aaa;text-decoration:none;font-size:13px;font-weight:800}
+.section-nav a:hover{background:#18181b;color:#fff}
+.member-panel{display:flex;align-items:center;gap:18px;padding:20px 22px;background:linear-gradient(180deg,#131316,#0f0f12);border:1px solid var(--line);border-radius:18px;margin-bottom:26px}
+.member-avatar{width:82px;height:82px;border-radius:50%;overflow:hidden;background:#1b1b20;border:1px solid #33333a;display:grid;place-items:center;font-size:30px;flex:none}
+.member-avatar img{width:100%;height:100%;object-fit:cover}
+.member-name{font-size:25px;font-weight:950;letter-spacing:-.02em}
+.member-role{color:#c7c7ce;font-size:14px;font-weight:800;margin-top:2px}
+.member-details{display:flex;gap:10px 20px;flex-wrap:wrap;margin-top:9px;color:var(--muted);font-size:13px}
+.member-details b{color:#fff}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:15px}
+.top h2{margin:0}
+.stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stat{background:#0d0d10;border:1px solid var(--line);border-radius:12px;padding:14px}
+.stat span{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
+.stat b{font-size:18px}
+@media(max-width:760px){
+  .page-shell{padding:24px 14px 60px}.page-top{margin-bottom:36px}.grid,.stat-grid{grid-template-columns:1fr}
+  .member-panel{align-items:flex-start}.member-details{display:grid;gap:5px}.page-top h1{font-size:28px}
+}
+
+.dashboard-shell{max-width:1120px;margin:0 auto;padding:34px 24px 80px}
+.login-wrap{min-height:calc(100vh - 68px);display:grid;place-items:center}
+.login{width:min(380px,100%);background:#111113;border:1px solid #2d2d33;border-radius:16px;padding:22px;box-shadow:0 18px 55px rgba(0,0,0,.32)}
+.login-title{text-align:center;margin-bottom:18px}.login-title .vory{font-size:30px;font-weight:950;color:var(--accent)}.login-title h2{font-size:16px;margin:7px 0 0;color:#d4d4d8}
+.login-error{color:#ef4444;font-size:12px;text-align:center;min-height:18px;margin:8px 0}
+.login-home-link{display:block;width:max-content;margin:16px auto 0;color:#8b8b94;text-decoration:none;font-size:13px;font-weight:800}
+.dashboard-title{margin-bottom:42px}.dashboard-title .kicker{color:var(--accent);font-size:12px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}.dashboard-title h1{margin:7px 0 0;font-size:36px}
+.dashboard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.dashboard-tile{min-height:170px;background:linear-gradient(180deg,#141416,#101012);border:1px solid #29292f;border-radius:16px;padding:19px;text-decoration:none;display:flex;flex-direction:column;justify-content:space-between;transition:.15s transform,.15s border-color}
+.dashboard-tile:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 10px 28px rgba(249,115,22,.08)}
+.dashboard-tile.profile-wide{grid-column:1/-1;min-height:145px}
+.dashboard-tile.locked{opacity:.48;cursor:not-allowed;filter:grayscale(.35)}
+.dashboard-tile.locked:hover{transform:none;border-color:#29292f;box-shadow:none}
+.dashboard-tile.locked .dashboard-arrow{color:#777}
+.lock-note{margin-top:10px;color:#a3a3aa;font-size:12px;font-weight:800}
+.dashboard-icon{font-size:28px}.dashboard-tile h3{margin:12px 0 7px;font-size:18px}.dashboard-tile p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}.dashboard-arrow{color:var(--accent);font-size:20px;font-weight:900;align-self:flex-end}
+.dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:14px}
+@media(max-width:850px){.dashboard-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.dashboard-grid{grid-template-columns:1fr}}
+</style></head>
+<body><div class="dashboard-shell">
+<section id="loginView" class="login-wrap">
+  <div class="login">
+    <div class="login-title"><div class="vory">Vory V</div><h2>Connexion à son compte</h2></div>
+    <div class="row"><label>Email ou Nom RP</label><input id="loginIdentifier" placeholder="email@a4l.fr ou Nom RP (ex: Jean Pascal)"></div>
+    <div class="row"><label>Mot de passe</label><input id="loginPassword" type="password"></div>
+    <div class="login-error" id="loginMsg"></div>
+    <div class="actions" style="justify-content:center"><button class="btn primary" id="loginBtn">Se connecter</button></div>
+    <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:16px">
+  <a class="login-home-link" style="margin:0" href="inscription/">Créer un compte</a>
+  <a class="login-home-link" style="margin:0" href="../index.html">← Retour au site principal</a>
+</div>
+  </div>
+</section>
+
+<section id="appView" class="hidden">
+  <div class="dashboard-head">
+    <div class="dashboard-title"><div class="kicker" id="dashboardKicker">Vory V</div><h1 id="dashboardTitle">Espace Membre</h1></div>
+    <div class="actions"><a class="btn secondary" href="../index.html">Page principale</a><button class="btn secondary" id="logoutBtn">Déconnexion</button></div>
+  </div>
+  
+<div class="member-panel">
+  <div class="member-avatar" id="memberAvatar">👤</div>
+  <div>
+    <div class="member-name" id="memberName">—</div>
+    <div class="member-role" id="memberRole">—</div>
+    <div class="member-details">
+      <span>N° : <b id="memberNumber">—</b></span>
+      <span>Email : <b id="memberEmail">—</b></span>
+      <span>Argent : <b id="memberMoney">0 $</b></span>
+    </div>
+  </div>
+</div>
+
+  <div class="dashboard-grid">
+    <a class="dashboard-tile profile-wide" href="profil/"><div><div class="dashboard-icon">👤</div><h3>Mon Profil</h3><p>Consulte / Modifie tes informations, ta photo de profil, ton mot de passe et tes achats sur la Boutique RP.</p></div><div class="dashboard-arrow">→</div></a>
+
+    <a class="dashboard-tile" id="tileEntreprise" href="../entreprise/"><div><div class="dashboard-icon">🏢</div><h3>Entreprise</h3><p>Accéder à l'entreprise.</p><div class="lock-note" id="lockEntreprise"></div></div><div class="dashboard-arrow">→</div></a>
+
+    <a class="dashboard-tile" id="tilelockii" href="../casino/"><div><div class="dashboard-icon">🎰</div><h3>Casino</h3><p>Accède au Casino | <strong style="color:#ef4444;">🔴 En développement</strong></p></div><div class="dashboard-arrow">→</div></a>
+
+    <a class="dashboard-tile" id="tileGang" href="../gang/"><div><div class="dashboard-icon">🥷</div><h3>Gang</h3><p>Accéder à l'espace et aux informations de ton gang. | <strong style="color:#ef4444;">🔴 En développement</strong></p><div class="lock-note" id="lockGang"></div></div><div class="dashboard-arrow">→</div></a>
+
+    <a class="dashboard-tile" id="tilelocki" href="../carte.html"><div><div class="dashboard-icon">🗺️​</div><h3> Carte </h3><p> Accède directement à la carte interactive. </p></div><div class="dashboard-arrow">→</div></a>
+    
+    <a class="dashboard-tile" id="tileVehicule" href="../entreprise/vehicules/"><div><div class="dashboard-icon">🚘</div><h3>Véhicule d'entreprise</h3><p>Consulter et gérer les véhicules liés à ton entreprise.</p><div class="lock-note" id="lockVehicule"></div></div><div class="dashboard-arrow">→</div></a>
+    
+    <a class="dashboard-tile" id="tilelockiii" href="../evenement/"><div><div class="dashboard-icon">📅​</div><h3>Événements</h3><p>Découvre les prochains événements et activités organisés. (A4L ou VoryV) | <strong style="color:#ef4444;">🔴 En développement</strong></p></div><div class="dashboard-arrow">→</div></a>
+    
+    <a class="dashboard-tile" id="tilePoints" href="points/"><div><div class="dashboard-icon">📍</div><h3>Points de carte</h3><p>Ajouter, modifier et organiser les points visibles sur la carte.</p></div><div class="dashboard-arrow">→</div></a>
+
+    <a class="dashboard-tile" id="tileShopOrders" href="boutique/"><div><div class="dashboard-icon">🛒</div><h3>Demandes boutique</h3><p>Consulter les commandes en attente, valider les achats et consulter l'historique.</p></div><div class="dashboard-arrow">→</div></a>
+
+    <a class="dashboard-tile" id="tileAccounts" href="comptes/"><div><div class="dashboard-icon">👥</div><h3>Compte & Rôle</h3><p>Gérer les comptes, administrateurs, modérateurs et membres.</p></div><div class="dashboard-arrow">→</div></a>
+  </div>
+</section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../database.js"></script>
+<script>
+const $=id=>document.getElementById(id);let db=null,currentUser=null,currentProfile=null;
+if(window.vorySupabaseConfigured&&window.vorySupabaseConfigured())db=window.supabase.createClient(window.VORY_SUPABASE_URL,window.VORY_SUPABASE_KEY);
+function roleLabel(role){return role==='admin'?'Administrateur':role==='moderator'?'Modérateur':'Membre'}
+async function resolveEmail(identifier){
+  const {data,error}=await db.rpc('resolve_login_identifier',{
+    p_identifier:identifier
+  });
+
+  if(error){
+    console.error('resolve_login_identifier:',error);
+    return null;
+  }
+
+  return data||null;
+}
+function setTileLocked(tileId,noteId,locked,message){
+  const tile=$(tileId),note=$(noteId);
+  if(!tile)return;
+  tile.classList.toggle('locked',locked);
+  if(note)note.textContent=locked?'🔒 '+message:'';
+  if(locked){
+    tile.setAttribute('aria-disabled','true');
+    tile.onclick=e=>e.preventDefault();
+  }else{
+    tile.removeAttribute('aria-disabled');
+    tile.onclick=null;
+  }
+}
+function renderDashboard(){
+  $('memberName').textContent=currentProfile.rp_name||'Sans Nom RP';
+  $('memberRole').textContent=roleLabel(currentProfile.role);
+  $('memberNumber').textContent=currentProfile.member_number||'Non attribué';
+  $('memberEmail').textContent=currentProfile.membre_email_rp||'—';
+  $('memberMoney').textContent=Number(currentProfile.money||0).toLocaleString('fr-FR')+' $';
+  if(currentProfile.avatar_url){
+    const clean=String(currentProfile.avatar_url).split('?v=')[0];
+    $('memberAvatar').innerHTML='<img src="'+clean+'?v='+Date.now()+'" alt="Photo">';
+  }
+  if(currentProfile.role==='admin'){
+    document.title='Vory V — Administrateur';$('dashboardTitle').textContent='Vory V — Administrateur';$('dashboardKicker').textContent='Administration';
+  }else{
+    document.title='Vory V — Espace Membre';$('dashboardTitle').textContent='Vory V — Espace Membre';$('dashboardKicker').textContent=currentProfile.role==='moderator'?'Espace Modérateur':'Espace Membre';
+  }
+  const staff=['admin','moderator'].includes(currentProfile.role);
+  const companyRanks=['employee','associate','manager','pdg'];
+  const companyVehicleRanks=['manager','pdg'];
+  const gangRanks=['gang_member','right_hand','leader'];
+
+  const isEmployee=companyRanks.includes(currentProfile.company_rank);
+  const isStaff=companyVehicleRanks.includes(currentProfile.company_rank);
+  const isGangMember=gangRanks.includes(currentProfile.gang_rank);
+
+  setTileLocked('tileEntreprise','lockEntreprise',!(staff||isEmployee),'Accès réservé aux membres de l’entreprise');
+  setTileLocked('tileVehicule','lockVehicule',!(staff||isStaff),'Accès réservé aux gestionnaires de l’entreprise');
+  setTileLocked('tileGang','lockGang',!(staff||isGangMember),'Accès réservé aux membres du gang');
+
+  if(currentProfile.role==='member'){
+    $('tilePoints').style.display='none';$('tileAccounts').style.display='none';$('tileShopOrders').style.display='none';
+  }else if(currentProfile.role==='moderator'){
+    $('tileAccounts').style.display='none';
+  }
+}
+async function showApp(session){
+  currentUser=session?.user||null;if(!currentUser)return;
+  const {data,error}=await db.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
+  if(error||!data||!['member','moderator','admin'].includes(data.role)){$('loginMsg').textContent='Ce compte n’a pas accès à cet espace.';return}
+  currentProfile=data;$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');renderDashboard();
+}
+$('loginPassword').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    e.preventDefault();
+    $('loginBtn').click();
+  }
+});
+$('loginBtn').onclick=async()=>{
+  $('loginMsg').textContent='';const identifier=$('loginIdentifier').value.trim(),password=$('loginPassword').value;if(!identifier||!password)return;
+  const email=await resolveEmail(identifier);if(!email){$('loginMsg').textContent='Identifiant ou mot de passe incorrect.';return}
+  const {data,error}=await db.auth.signInWithPassword({email,password});
+  if(error){$('loginMsg').textContent='Identifiant ou mot de passe incorrect.';return}
+  await showApp(data.session);
+};
+$('logoutBtn').onclick=async()=>{await db.auth.signOut();window.location.href='../index.html'};
+(async()=>{if(!db)return;const {data:{session}}=await db.auth.getSession();if(session)await showApp(session)})();
+</script></body></html>
