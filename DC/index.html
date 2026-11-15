@@ -147,7 +147,7 @@ function apply(){const r=document.documentElement;r.style.setProperty('--ac',S.c
 document.querySelectorAll('.lg').forEach(i=>i.src=LOGO);apply();
 function flash(t){const e=$('#toast');e.textContent=t;e.classList.remove('hide');clearTimeout(flash.t);flash.t=setTimeout(()=>e.classList.add('hide'),3500)}
 function setMsg(t,ok){const m=$('#am');m.textContent=t;m.className='msg'+(ok?' ok':'')}
-async function rpEmail(key){const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(key));const hex=Array.from(new Uint8Array(bytes)).map(b=>b.toString(16).padStart(2,'0')).join('');return 'rp-'+hex+'@los-sicarios.invalid'}
+async function rpEmail(key){const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(key));const hex=Array.from(new Uint8Array(bytes)).map(b=>b.toString(16).padStart(2,'0')).join('');return 'rp-'+hex+'@los-sicarios.app'}
 function rpPassword(pin){return 'LS!'+pin}
 function isAdmin(u){return !!u&&u.rank<=ADMIN_MAX}
 const ws=()=>add(wkStart(today),7*weekOff),days=()=>[0,1,2,3,4,5,6].map(i=>add(ws(),i));
@@ -195,12 +195,11 @@ $('#fin').onsubmit=async e=>{e.preventDefault();if(!loaded)return setMsg('Connex
 $('#fup').onsubmit=async e=>{e.preventDefault();if(!loaded)return setMsg('Base de données indisponible pour le moment.');
  const n=$('#n2').value.trim(),key=n.toLowerCase(),pin=$('#p2').value,discord=$('#d2').value.trim();
  if(!n)return setMsg('Entre ton nom RP.');if(!/^\d{4}$/.test(pin))return setMsg('Le code doit contenir exactement 4 chiffres.');
- if(users.some(x=>x.key===key))return setMsg('Ce nom RP existe déjà.');
- try{const {data,error}=await sb.auth.signUp({email:await rpEmail(key),password:rpPassword(pin),options:{data:{rp_name:n}}});if(error)throw error;
+ try{const {data,error}=await sb.auth.signUp({email:await rpEmail(key),password:rpPassword(pin),options:{data:{rp_name:n,rp_key:key,discord}}});if(error)throw error;
   if(!data.user)throw new Error('Compte Auth non créé.');
-  const {error:pe}=await sb.from('profiles').insert({id:data.user.id,rp_name:n,rp_key:key,discord,rank:6,active:false});if(pe)throw pe;
-  if(data.session)await sb.auth.signOut();e.target.reset();await loadData();setMsg('Demande envoyée. Un administrateur doit activer ton compte avant ta première connexion.',true);
- }catch(x){console.error(x);setMsg('Création refusée : nom RP déjà utilisé ou confirmation e-mail encore activée dans Supabase.')}};
+  if(data.user.identities&&data.user.identities.length===0)return setMsg('Ce nom RP existe déjà.');
+  if(data.session)await sb.auth.signOut();e.target.reset();setMsg('Demande envoyée. Un administrateur doit activer ton compte avant ta première connexion.',true);
+ }catch(x){console.error(x);setMsg(/already|registered/i.test(x.message||'')?'Ce nom RP existe déjà.':'Création refusée : '+(x.message||'erreur inconnue'))}};
 document.addEventListener('click',e=>{const c=e.target.closest('[data-close]');if(c)$('#'+c.dataset.close).close()});
 async function boot(){
  try{
