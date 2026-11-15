@@ -1,8 +1,17 @@
 // Sicarios — Configuration Database
-window.VORY_SUPABASE_URL = 'https://snsbatpmygkkmfughtmn.supabase.co';
-window.VORY_SUPABASE_KEY = 'sb_publishable_sHhPrks-w6z43PZdjcRDJA_c9m-ySif';
+window.SICARIOS_SUPABASE_URL = 'https://TON-PROJET.supabase.co';
+window.SICARIOS_SUPABASE_KEY = 'TA_CLE_PUBLIQUE';
 
 window.vorySupabaseConfigured = function () {
-  return !window.SICARIOS_SUPABASE_URL.includes('TON-PROJET') &&
+  return typeof window.SICARIOS_SUPABASE_URL === 'string' &&
+         typeof window.SICARIOS_SUPABASE_KEY === 'string' &&
+         window.SICARIOS_SUPABASE_URL.includes('.supabase.co') &&
          !window.SICARIOS_SUPABASE_KEY.includes('TA_CLE');
 };
+
+const supabase = window.vorySupabaseConfigured()
+  ? window.supabase.createClient(
+      window.SICARIOS_SUPABASE_URL,
+      window.SICARIOS_SUPABASE_KEY
+    )
+  : null;
