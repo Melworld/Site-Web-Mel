@@ -147,7 +147,23 @@ function apply(){const r=document.documentElement;r.style.setProperty('--ac',S.c
 document.querySelectorAll('.lg').forEach(i=>i.src=LOGO);apply();
 function flash(t){const e=$('#toast');e.textContent=t;e.classList.remove('hide');clearTimeout(flash.t);flash.t=setTimeout(()=>e.classList.add('hide'),3500)}
 function setMsg(t,ok){const m=$('#am');m.textContent=t;m.className='msg'+(ok?' ok':'')}
-async function rpEmail(key){const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(key));const hex=Array.from(new Uint8Array(bytes)).map(b=>b.toString(16).padStart(2,'0')).join('');return 'rp-'+hex+'@los-sicarios.app'}
+function sha256hex(str){
+ const K=[],h=[];for(let n=2,c=0;c<64;n++){let p=1;for(let i=2;i*i<=n;i++)if(n%i===0){p=0;break}if(p){if(c<8)h[c]=(Math.pow(n,.5)%1)*4294967296|0;K[c++]=(Math.pow(n,1/3)%1)*4294967296|0}}
+ const b=new TextEncoder().encode(str),l=b.length,tot=((l+9+63)>>6)<<6,m=new Uint8Array(tot);m.set(b);m[l]=0x80;
+ const dv=new DataView(m.buffer);dv.setUint32(tot-8,Math.floor(l*8/4294967296));dv.setUint32(tot-4,(l*8)>>>0);
+ const w=new Array(64),R=(x,n)=>(x>>>n)|(x<<(32-n));
+ for(let o=0;o<tot;o+=64){
+  for(let i=0;i<16;i++)w[i]=dv.getUint32(o+i*4)|0;
+  for(let i=16;i<64;i++){const s0=R(w[i-15],7)^R(w[i-15],18)^(w[i-15]>>>3),s1=R(w[i-2],17)^R(w[i-2],19)^(w[i-2]>>>10);w[i]=(w[i-16]+s0+w[i-7]+s1)|0}
+  let [a,bb,c,d,e,f,g,hh]=h;
+  for(let i=0;i<64;i++){const S1=R(e,6)^R(e,11)^R(e,25),ch=(e&f)^(~e&g),t1=(hh+S1+ch+K[i]+w[i])|0,S0=R(a,2)^R(a,13)^R(a,22),mj=(a&bb)^(a&c)^(bb&c),t2=(S0+mj)|0;hh=g;g=f;f=e;e=(d+t1)|0;d=c;c=bb;bb=a;a=(t1+t2)|0}
+  h[0]=(h[0]+a)|0;h[1]=(h[1]+bb)|0;h[2]=(h[2]+c)|0;h[3]=(h[3]+d)|0;h[4]=(h[4]+e)|0;h[5]=(h[5]+f)|0;h[6]=(h[6]+g)|0;h[7]=(h[7]+hh)|0}
+ return h.map(x=>(x>>>0).toString(16).padStart(8,'0')).join('')}
+async function rpEmail(key){let hex;
+ if(window.crypto&&crypto.subtle){const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(key));hex=Array.from(new Uint8Array(bytes)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+ else hex=sha256hex(key);
+ return 'rp-'+hex+'@los-sicarios.app'}
+const uuid=()=>window.crypto&&crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16)});
 function rpPassword(pin){return 'LS!'+pin}
 function isAdmin(u){return !!u&&u.rank<=ADMIN_MAX}
 const ws=()=>add(wkStart(today),7*weekOff),days=()=>[0,1,2,3,4,5,6].map(i=>add(ws(),i));
@@ -299,7 +315,7 @@ $('#fs').onsubmit=async e=>{e.preventDefault();const d=$('#sd').value,q=+$('#sq'
  if(!file)return m.textContent='Ajoute une photo comme preuve.';
  if(dq(me.id,d)+q>DAY_MAX)return m.textContent=`Limite de ${DAY_MAX} conteneurs par jour dépassée.`;
  if(q<1||q>DAY_MAX)return m.textContent='Quantité invalide.';m.textContent='Envoi en cours…';
- try{const blob=await blobOf(file,1600,.82),path=`${me.id}/${crypto.randomUUID()}.jpg`;
+ try{const blob=await blobOf(file,1600,.82),path=`${me.id}/${uuid()}.jpg`;
   const {error:upErr}=await sb.storage.from('proofs').upload(path,blob,{contentType:'image/jpeg',upsert:false});if(upErr)throw upErr;
   const {error}=await sb.from('submissions').insert({user_id:me.id,work_date:d,quantity:q,photo_path:path,note:$('#sn').value, status:'p'});if(error){await sb.storage.from('proofs').remove([path]);throw error}
   $('#dsub').close();weekOff=0;await loadData();render();
