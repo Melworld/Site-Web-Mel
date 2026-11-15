@@ -246,7 +246,7 @@ async function boot(){
  }catch(e){console.error(e);setMsg(e.message||'Impossible de joindre Supabase.')}
 }
 boot();
-const PAGES=[['mine','Mes conteneurs',0],['atm','ATM',0],['superette','Supérettes',0],['settings','Paramètres',0],['valid','Validation des preuves',1],['history','Historique',1],['team','Suivi équipe',1],['members','Membres',1]];
+const PAGES=[['mine','Mes conteneurs',0],['atm','Mes ATM',0],['superette','Mes Supérettes',0],['settings','Paramètres',0],['valid','Validation des preuves',1],['history','Historique',1],['team','Suivi équipe',1],['members','Membres',1]];
 function render(){
  const adm=isAdmin(me),pend=subs.filter(s=>s.st==='p').length,inact=users.filter(u=>!u.on).length;
  if(PAGES.find(p=>p[0]===page)[2]&&!adm)page='mine';
