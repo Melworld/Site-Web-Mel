@@ -75,6 +75,43 @@ dialog::backdrop{background:rgba(0,0,0,.7)}.row{display:flex;gap:10px;justify-co
 input[type=range]{padding:0;background:none;accent-color:var(--ac)}
 @media(max-width:760px){#auth{grid-template-columns:1fr;grid-template-rows:auto 1fr}#auth .cover{height:210px}#auth .cover img{object-position:center 28%}#auth .cover::after{background:linear-gradient(180deg,transparent 55%,var(--bg))}#app{grid-template-columns:1fr;grid-template-rows:auto 1fr}aside{flex-direction:row;overflow-x:auto;padding:8px;background:var(--pn)}.brand div,.me small,.grp{display:none}.brand{padding:0 10px 0 4px}.brand img{height:44px}nav{flex-direction:row;flex:none}nav button{white-space:nowrap;gap:8px}main{padding:0 14px 30px}.pop{flex-wrap:wrap;width:260px}}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--pn);padding:10px 16px;border-radius:10px;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+
+/* ===== ACCUEIL ===== */
+.hub{display:grid;gap:16px}
+.hero{position:relative;overflow:hidden;border-radius:20px;padding:22px 26px;background:linear-gradient(120deg,var(--p2),var(--pn));display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;animation:up .5s both}
+.hero::after{content:"";position:absolute;right:-60px;top:-90px;width:280px;height:280px;background:radial-gradient(circle,color-mix(in srgb,var(--ac) 30%,transparent),transparent 65%);pointer-events:none}
+.hero h1{margin:0 0 4px;font-size:26px}
+.ring{--p:0;position:relative;width:78px;height:78px;border-radius:50%;background:conic-gradient(var(--ac) calc(var(--p)*1%),var(--p2) 0);display:grid;place-items:center;z-index:1}
+.ring::before{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--pn)}
+.ring b{position:relative;font-size:16px}
+.hstat{display:flex;align-items:center;gap:12px;z-index:1}
+.duo{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+.big{position:relative;overflow:hidden;isolation:isolate;border-radius:22px;padding:26px;background:var(--pn);display:flex;flex-direction:column;gap:18px;min-height:320px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ac) 22%,transparent);animation:up .5s .1s both}
+.big.adm{--ac:var(--warn);--acd:color-mix(in srgb,var(--warn) 14%,transparent);animation-delay:.2s}
+.big::before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(135deg,transparent 0 22px,var(--acd) 22px 24px);transition:transform .6s}
+.big::after{content:"";position:absolute;width:380px;height:380px;right:-130px;top:-150px;z-index:-1;background:radial-gradient(circle,color-mix(in srgb,var(--ac) 32%,transparent),transparent 65%)}
+.big:hover::before{transform:translate(24px,24px)}
+.bt{display:flex;align-items:center;gap:16px}
+.bi{font-size:46px;width:78px;height:78px;display:grid;place-items:center;border-radius:20px;background:var(--acd);box-shadow:0 0 0 1px color-mix(in srgb,var(--ac) 40%,transparent),0 10px 30px color-mix(in srgb,var(--ac) 25%,transparent);transform:rotate(-6deg);transition:transform .3s}
+.big:hover .bi{transform:rotate(0) scale(1.06)}
+.big h2{font-size:28px;margin:0;text-transform:uppercase;letter-spacing:.04em}
+.big h2 span{color:var(--ac)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:auto}
+.tile{display:flex;flex-direction:column;gap:6px;background:color-mix(in srgb,var(--p2) 88%,transparent);backdrop-filter:blur(4px);border-radius:14px;padding:14px;box-shadow:inset 0 0 0 1px transparent;transition:transform .2s,box-shadow .2s}
+.tile:hover{transform:translateY(-4px);box-shadow:inset 0 0 0 1px var(--ac),0 12px 28px rgba(0,0,0,.45)}
+.tl{background:none;border:0;padding:0;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;width:100%;flex:1}
+.ti{font-size:26px;line-height:1}
+.tl b{font-size:14px}
+.tl .mu{font-size:12px}
+.tile .btn{margin-top:4px}
+.tile.go{padding:16px}
+.dot{display:inline-block;min-width:22px;text-align:center;background:var(--ac);color:#000;font-weight:700;border-radius:11px;padding:1px 7px;font-size:12px;margin-left:6px;animation:pls 1.6s infinite}
+@keyframes pls{50%{box-shadow:0 0 0 7px transparent;opacity:.8}0%{box-shadow:0 0 0 0 var(--ac)}}
+.big.lock{filter:grayscale(1);opacity:.55}
+.lockmsg{margin:auto 0;text-align:center;font-size:15px}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+@media(max-width:900px){.duo{grid-template-columns:1fr}.big{min-height:0}}
+@media(prefers-reduced-motion:reduce){.hero,.big,.dot{animation:none!important}}
 </style>
 </head>
 <body>
@@ -148,7 +185,7 @@ const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+Stri
 const add=(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
 const today=iso(new Date()),fr=s=>s.split('-').reverse().join('/');
 const wkStart=s=>add(s,-((new Date(s+'T12:00:00').getDay()+6)%7));
-let users=[],subs=[],me=null,meId=null,page='mine',rejId=null,weekOff=0,sel='',calOpen=false,loaded=false;
+let users=[],subs=[],me=null,meId=null,page='home',rejId=null,weekOff=0,sel='',calOpen=false,loaded=false;
 let sb=null,session=null,refreshing=false;
 let S={color:'#ff2447',bright:100,deco:'none',mot:'frame'};
 const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
@@ -211,7 +248,7 @@ async function wr(path,data){
   if(q?.error)throw q.error;await loadData();flash('Modification enregistrée.');
  }catch(e){console.error(e);flash('Écriture refusée : vérifie tes droits Supabase.')}
 }
-function enter(id,rem){meId=id;me=users.find(u=>u.id===id);if(rem)ls.set('sic-me',id);else ls.del('sic-me');page='mine';weekOff=0;sel='';$('#auth').classList.add('hide');$('#app').classList.remove('hide');render()}
+function enter(id,rem){meId=id;me=users.find(u=>u.id===id);if(rem)ls.set('sic-me',id);else ls.del('sic-me');page='home';weekOff=0;sel='';$('#auth').classList.add('hide');$('#app').classList.remove('hide');render()}
 async function leave(){try{await sb?.auth.signOut()}catch(e){}meId=null;me=null;ls.del('sic-me');$('#app').classList.add('hide');$('#auth').classList.remove('hide');$('#fin').reset();setMsg('')}
 $('#out').onclick=leave;
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));$('#fin').classList.toggle('hide',b.dataset.t!=='in');$('#fup').classList.toggle('hide',b.dataset.t!=='up');setMsg('')});
@@ -246,7 +283,7 @@ async function boot(){
  }catch(e){console.error(e);setMsg(e.message||'Impossible de joindre Supabase.')}
 }
 boot();
-const PAGES=[['mine','Mes conteneurs',0],['atm','Mes ATM',0],['superette','Mes Supérettes',0],['settings','Paramètres',0],['valid','Validation des preuves',1],['history','Historique',1],['team','Suivi équipe',1],['members','Membres',1]];
+const PAGES=[['home','Accueil',0],['mine','Mes conteneurs',0],['atm','Mes ATM',0],['superette','Mes Supérettes',0],['settings','Paramètres',0],['valid','Validation des preuves',1],['history','Historique',1],['team','Suivi équipe',1],['members','Membres',1]];
 function render(){
  const adm=isAdmin(me),pend=subs.filter(s=>s.st==='p').length,inact=users.filter(u=>!u.on).length;
  if(PAGES.find(p=>p[0]===page)[2]&&!adm)page='mine';
@@ -254,8 +291,9 @@ function render(){
  $('#nav').innerHTML=PAGES.filter(p=>!p[2]||adm).map(([k,l])=>{const n=k==='valid'?pend:k==='members'?inact:0;
   return `<button data-p="${k}" class="${k===page?'on':''}"><span>${l}</span>${n?`<em>${n}</em>`:''}</button>`}).join('');
  const f=$('#nav [data-p=valid]');if(f)f.insertAdjacentHTML('beforebegin','<div class="grp">Administration</div>');
- $('#view').innerHTML={mine:()=>activity('container'),atm:()=>activity('atm'),superette:()=>activity('superette'),valid,history,team,members,settings}[page]();topbar()}
+ $('#view').innerHTML={home,mine:()=>activity('container'),atm:()=>activity('atm'),superette:()=>activity('superette'),valid,history,team,members,settings}[page]();topbar()}
 function topbar(){
+ if(page==='home'){$('#top').innerHTML='<span>Accueil</span><span class="sp"></span><span class="okt">● Accès contrôlé</span>';return}
  const k=page==='atm'||page==='superette'?page:'container',dn=daysDone(me.id,k),u=dq(me.id,today,null,k);
  $('#top').innerHTML=`<span>${PAGES.find(p=>p[0]===page)[2]?'Administration / ':''}${PAGES.find(p=>p[0]===page)[1]}</span><span class="sp"></span>
  <div class="wk"><button data-w="-1" aria-label="Semaine précédente">‹</button><button data-cal>${weekOff?'Semaine du '+fr(ws()):'Semaine en cours'}</button><button data-w="1" aria-label="Semaine suivante" ${weekOff>=0?'disabled':''}>›</button>
@@ -288,6 +326,24 @@ function activity(k){
  <div class="card" style="padding:0"><div class="tw"><table><thead><tr>${head}</tr></thead><tbody>
  ${my.map(row).join('')||'<tr><td colspan="5" class="mu">Aucune déclaration sur cette période.</td></tr>'}
  </tbody></table></div></div>`}
+
+function home(){
+ const adm=isAdmin(me),pend=subs.filter(s=>s.st==='p').length,inact=users.filter(u=>!u.on).length;
+ const ICO={container:'📦',atm:'🏧',superette:'🏪'},PG={container:'mine',atm:'atm',superette:'superette'};
+ const first=esc(me.name.split(' ')[0]);
+ const tot=Object.keys(KINDS).reduce((a,k)=>a+Math.min(WEEK_MIN,daysDone(me.id,k)),0),pc=Math.round(tot/(3*WEEK_MIN)*100);
+ const decl=Object.entries(KINDS).map(([k,K])=>{const u=dq(me.id,today,null,k),dn=daysDone(me.id,k);
+  return `<div class="tile"><button class="tl" data-go="${PG[k]}"><span class="ti">${ICO[k]}</span><b>${K.title}</b><span class="mu">${u}/${K.max} aujourd’hui · ${dn}/${WEEK_MIN} jours</span><div class="bar"><i style="width:${Math.min(100,u/K.max*100)}%"></i></div></button><button class="btn sm" data-qd="${k}">+ Déclarer</button></div>`}).join('');
+ const AD=[['valid','✅','Validation',pend?pend+' à traiter':'Tout est à jour',pend],['history','📜','Historique','Preuves déjà traitées',0],['team','📊','Suivi équipe','Quotas de la semaine',0],['members','👥','Membres',inact?inact+' compte'+(inact>1?'s':'')+' à activer':'Comptes et rangs',inact]];
+ const adm_=AD.map(([p,i,t,s,n])=>`<div class="tile go"><button class="tl" data-go="${p}"><span class="ti">${i}</span><b>${t}${n?`<span class="dot">${n}</span>`:''}</b><span class="mu">${s}</span></button></div>`).join('');
+ return `<div class="hub">
+ <div class="hero"><div><h1>Salut ${first} 👋</h1><div class="mu">${rk(me)} · semaine du ${fr(ws())}</div></div>
+  <div class="hstat"><div class="mu" style="text-align:right">Objectif<br>de la semaine</div><div class="ring" style="--p:${pc}"><b>${pc}%</b></div></div></div>
+ <div class="duo">
+  <section class="big"><div class="bt"><div class="bi">📝</div><div><h2>Décla<span>ration</span></h2><div class="mu">Envoie tes preuves et tes montants en quelques clics.</div></div></div><div class="tiles">${decl}</div></section>
+  <section class="big adm ${adm?'':'lock'}"><div class="bt"><div class="bi">🛡️</div><div><h2>Admi<span>nistration</span></h2><div class="mu">Contrôle, suivi et gestion de l’équipe.</div></div></div>
+  ${adm?`<div class="tiles">${adm_}</div>`:'<div class="lockmsg">🔒 Réservé à la direction</div>'}</section>
+ </div></div>`}
 function valid(){
  const l=subs.filter(s=>s.st==='p');
  return `<div class="head"><div><h2>Validation des preuves</h2><div class="mu">Contrôle les preuves et les montants avant de valider.</div></div></div>
@@ -333,6 +389,8 @@ function settings(){
  <div class="card"><b>Mouvement de fond</b>${seg('mot',[['frame','Cadre fixe'],['lanes','Allées animées'],['none','Aucun']])}</div></div>`}
 
 $('#view').onclick=e=>{const t=e.target,g=a=>t.dataset[a];
+ const q=t.closest('[data-qd]');if(q){openSub(q.dataset.qd);return}
+ const gb=t.closest('[data-go]');if(gb){page=gb.dataset.go;sel='';render();return}
  if(t.id==='add')openSub(g('k'));
  if(g('img')){$('#pv').src=subs.find(s=>s.id===g('img')).photo;$('#dpv').showModal()}
  if(g('hf')){hf=g('hf');render()}
