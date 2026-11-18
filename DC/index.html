@@ -112,6 +112,8 @@ input[type=range]{padding:0;background:none;accent-color:var(--ac)}
 @keyframes up{from{opacity:0;transform:translateY(14px)}}
 @media(max-width:900px){.duo{grid-template-columns:1fr}.big{min-height:0}}
 @media(prefers-reduced-motion:reduce){.hero,.big,.dot{animation:none!important}}
+th[data-sort]{cursor:pointer;user-select:none;white-space:nowrap}th[data-sort]:hover{color:var(--tx)}
+th .ar{margin-left:6px;font-size:10px;opacity:.35}th.on{color:var(--tx)}th.on .ar{opacity:1;color:var(--ac)}
 </style>
 </head>
 <body>
@@ -352,26 +354,33 @@ function valid(){
  <td class="n"><button class="btn sm" data-ok="${s.id}">Valider</button> <button class="gh sm" data-no="${s.id}">Refuser</button></td></tr>`}).join('')||'<tr><td colspan="8" class="mu">Rien à valider pour le moment.</td></tr>'}
  </tbody></table></div></div>`}
 let hf='all',hm='';
+const SO={h:{k:'when',d:-1},t:{k:'name',d:1}};
+const sth=(tb,k,l,c='',f=1)=>{const o=SO[tb],on=o.k===k;return `<th class="${c} ${on?'on':''}" data-sort="${tb}:${k}:${f}" aria-sort="${on?(o.d>0?'ascending':'descending'):'none'}">${l}<span class="ar">${on?(o.d>0?'▲':'▼'):'↕'}</span></th>`};
+const srt=(arr,tb,G)=>{const o=SO[tb],g=G[o.k];return arr.sort((a,b)=>{const x=g(a),y=g(b);return(typeof x==='string'?x.localeCompare(y,'fr'):x-y)*o.d})};
 function history(){
  let l=subs.filter(s=>s.st!=='p');
  if(hf!=='all')l=l.filter(s=>s.st===hf);
  if(hm)l=l.filter(s=>s.uid===hm);
- l.sort((a,b)=>(b.vat||b.at)-(a.vat||a.at));
+ srt(l,'h',{member:s=>byId(s.uid).name,type:s=>KINDS[s.kind].tag,day:s=>s.date,qty:s=>s.qty,amt:s=>s.amt,st:s=>s.st,by:s=>s.by?byId(s.by).name:'',when:s=>s.vat||s.at});
+ const H=`<th>Preuve</th>${sth('h','member','Membre')}${sth('h','type','Type')}${sth('h','day','Jour','',-1)}${sth('h','qty','Quantité','n',-1)}${sth('h','amt','Argent','n',-1)}${sth('h','st','Statut')}${sth('h','by','Traité par')}${sth('h','when','Le','',-1)}`;
  const tot=l.length,sh=l.slice(0,200);
  const when=s=>s.vat?new Date(s.vat).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
  return `<div class="head"><div><h2>Historique des preuves</h2><div class="mu">Toutes les déclarations traitées, avec la personne qui les a validées ou refusées.</div></div></div>
  <div class="head" style="margin-bottom:12px"><div class="seg">${[['all','Tous'],['v','Validés'],['r','Refusés']].map(([v,t])=>`<button data-hf="${v}" class="${hf===v?'on':''}">${t}</button>`).join('')}</div>
  <select data-hm style="width:auto;max-width:240px" aria-label="Filtrer par membre"><option value="">Tous les membres</option>${[...users].sort((a,b)=>a.name.localeCompare(b.name)).map(u=>`<option value="${u.id}" ${hm===u.id?'selected':''}>${esc(u.name)}</option>`).join('')}</select></div>
- <div class="card" style="padding:0"><div class="tw"><table style="min-width:920px"><thead><tr><th>Preuve</th><th>Membre</th><th>Type</th><th>Jour</th><th class="n">Quantité</th><th class="n">Argent</th><th>Statut</th><th>Traité par</th><th>Le</th></tr></thead><tbody>
+ <div class="card" style="padding:0"><div class="tw"><table style="min-width:920px"><thead><tr>${H}</tr></thead><tbody>
  ${sh.map(s=>{const u=byId(s.uid),pic=s.kind==='container';return `<tr><td>${s.photo?`<img class="th" src="${s.photo}" data-img="${s.id}" alt="Preuve">`:'<span class="mu">—</span>'}</td><td>${esc(u.name)}</td><td><span class="tag rk">${KINDS[s.kind].tag}</span></td><td>${fr(s.date)}</td><td class="n">${s.qty}</td><td class="n">${pic?'<span class="mu">—</span>':fmt(s.amt)}</td><td>${stag(s)}${s.reason?`<br><span class="mu">Motif : ${esc(s.reason)}</span>`:''}</td><td>${s.by?esc(byId(s.by).name):'<span class="mu">—</span>'}</td><td class="mu">${when(s)}</td></tr>`}).join('')||'<tr><td colspan="9" class="mu">Aucune preuve traitée pour le moment.</td></tr>'}
  </tbody></table></div></div>${tot>sh.length?`<div class="hint">${sh.length} plus récentes affichées sur ${tot}.</div>`:''}`}
 function team(){
  const cell=(id,k)=>{const K=KINDS[k],d=daysDone(id,k),part=days().map((x,i)=>({i,q:dq(id,x,'v',k)})).filter(p=>p.q>0&&p.q<K.max);
   const main=d>=WEEK_MIN?`<span class="tag v">${d} / ${WEEK_MIN}</span>`:`<span class="mu">${d} / ${WEEK_MIN}</span>`;
   return main+`<div class="mu" style="font-size:11px;margin-top:3px">${wkTot(id,'v',k)} ${K.unit} validés${part.length?' · partiel : '+part.map(p=>`${D[p.i]} ${p.q}/${K.max}`).join(', '):''}</div>`};
+ const sc=k=>u=>daysDone(u.id,k)*1000+wkTot(u.id,'v',k);
+ const tl=srt(users.filter(u=>u.on),'t',{name:u=>u.name,rank:u=>u.rank,container:sc('container'),atm:sc('atm'),superette:sc('superette'),money:u=>wkMoney(u.id,'v'),pend:u=>wkPend(u.id)});
+ const T=`${sth('t','name','Membre')}${sth('t','rank','Rang')}${sth('t','container','Conteneurs (jours)','n',-1)}${sth('t','atm','ATM (jours)','n',-1)}${sth('t','superette','Supérettes (jours)','n',-1)}${sth('t','money','Argent validé','n',-1)}${sth('t','pend','En attente','n',-1)}`;
  return `<div class="head"><div><h2>Suivi équipe</h2><div class="mu">Semaine du ${fr(ws())} · minimum ${WEEK_MIN} jours complets par activité (${DAY_MAX} conteneurs, ${KINDS.atm.max} ATM ou ${KINDS.superette.max} supérettes par jour).</div></div></div>
- <div class="card" style="padding:0"><div class="tw"><table style="min-width:780px"><thead><tr><th>Membre</th><th>Rang</th><th class="n">Conteneurs (jours)</th><th class="n">ATM (jours)</th><th class="n">Supérettes (jours)</th><th class="n">Argent validé</th><th class="n">En attente</th></tr></thead><tbody>
- ${users.filter(u=>u.on).map(u=>`<tr><td>${esc(u.name)}</td><td><span class="tag rk">${rk(u)}</span></td><td class="n">${cell(u.id,'container')}</td><td class="n">${cell(u.id,'atm')}</td><td class="n">${cell(u.id,'superette')}</td><td class="n">${fmt(wkMoney(u.id,'v'))}</td><td class="n">${wkPend(u.id)}</td></tr>`).join('')||'<tr><td colspan="7" class="mu">Aucun membre actif.</td></tr>'}
+ <div class="card" style="padding:0"><div class="tw"><table style="min-width:780px"><thead><tr>${T}</tr></thead><tbody>
+ ${tl.map(u=>`<tr><td>${esc(u.name)}</td><td><span class="tag rk">${rk(u)}</span></td><td class="n">${cell(u.id,'container')}</td><td class="n">${cell(u.id,'atm')}</td><td class="n">${cell(u.id,'superette')}</td><td class="n">${fmt(wkMoney(u.id,'v'))}</td><td class="n">${wkPend(u.id)}</td></tr>`).join('')||'<tr><td colspan="7" class="mu">Aucun membre actif.</td></tr>'}
  </tbody></table></div></div>`}
 function members(){
  const can=u=>u.rank>me.rank;
@@ -391,6 +400,7 @@ function settings(){
  <div class="card"><b>Mouvement de fond</b>${seg('mot',[['frame','Cadre fixe'],['lanes','Allées animées'],['none','Aucun']])}</div></div>`}
 
 $('#view').onclick=e=>{const t=e.target,g=a=>t.dataset[a];
+ const th=t.closest('[data-sort]');if(th){const[tb,k,f]=th.dataset.sort.split(':'),o=SO[tb];if(o.k===k)o.d*=-1;else{o.k=k;o.d=+f}render();return}
  const q=t.closest('[data-qd]');if(q){openSub(q.dataset.qd);return}
  const gb=t.closest('[data-go]');if(gb){page=gb.dataset.go;sel='';render();return}
  if(t.id==='add')openSub(g('k'));
