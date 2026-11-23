@@ -136,6 +136,21 @@ nav{flex-direction:row;flex:1;gap:4px}nav button{white-space:nowrap;gap:8px;alig
 .mini{display:inline-block;width:70px;height:5px;background:var(--p2);border-radius:3px;vertical-align:middle;margin-right:8px;overflow:hidden}.mini i{display:block;height:100%;background:var(--ok)}
 .card svg{display:block;margin-top:10px}
 @media(max-width:860px){.dd,.dd.t{grid-template-columns:1fr}}
+aside{background:none;box-shadow:none;padding:16px 26px 4px;gap:26px}
+.brand{flex:none}.brand div,.brand div{display:block}.brand b{font-size:30px;font-weight:800;letter-spacing:.01em;line-height:1}.brand small{display:none}
+nav{gap:4px}nav button{background:none!important;border-radius:0;padding:9px 13px;font-size:14px}
+nav button:hover{color:var(--tx)}nav button.on{color:var(--tx);box-shadow:inset 0 -2px 0 var(--ac)}
+.sub{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.sub button{background:none;border:0;border-radius:999px;padding:6px 13px;cursor:pointer;color:var(--mu);font-size:13px}
+.sub button:hover{color:var(--tx)}.sub button.on{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.sub .back{background:var(--p2);color:var(--tx);margin-right:8px}
+.hubx{--ac:var(--warn);display:grid;gap:26px}.hg h3{margin:0 0 12px;font-size:13px;font-weight:500;color:var(--mu)}
+.mcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.mc{display:flex;align-items:center;gap:16px;text-align:left;border:0;cursor:pointer;background:linear-gradient(135deg,color-mix(in srgb,var(--warn) 11%,var(--pn)),var(--pn));border-radius:18px;padding:20px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--warn) 18%,transparent);transition:transform .2s,box-shadow .2s}
+.mc:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 1px var(--warn),0 14px 30px rgba(0,0,0,.45)}
+.mc .mi{flex:none;font-size:30px;width:58px;height:58px;display:grid;place-items:center;border-radius:16px;background:color-mix(in srgb,var(--warn) 14%,transparent);transform:rotate(-5deg);transition:transform .2s}
+.mc:hover .mi{transform:rotate(0)}.mc b{font-size:15px;display:flex;align-items:center;gap:8px}.mc .mu{display:block;margin-top:2px}
+.mc .mg{margin-left:auto;font-size:20px;color:var(--warn);opacity:.6;transition:transform .2s,opacity .2s}.mc:hover .mg{transform:translateX(4px);opacity:1}
 th[data-sort]{cursor:pointer;user-select:none;white-space:nowrap}th[data-sort]:hover{color:var(--tx)}
 th .ar{margin-left:6px;font-size:10px;opacity:.35}th.on{color:var(--tx)}th.on .ar{opacity:1;color:var(--ac)}
 </style>
@@ -167,7 +182,7 @@ th .ar{margin-left:6px;font-size:10px;opacity:.35}th.on{color:var(--tx)}th.on .a
 
 <div id="app" class="hide">
  <aside>
-  <div class="brand"><img class="lg" height="38" alt=""><div><b>Los Sicarios</b><small>MANAGEMENT</small></div></div>
+  <div class="brand"><div><b>Los Sicarios</b><small>MANAGEMENT</small></div></div>
   <nav id="nav"></nav>
   <div class="me"><div><b id="mn"></b><br><small class="mu" id="mr"></small></div><button class="gh sm" id="out">Quitter</button></div>
  </aside>
@@ -339,13 +354,14 @@ function topbar(){
  <div class="wk"><button data-w="-1" aria-label="Semaine précédente">‹</button><button data-cal>${weekOff?'Semaine du '+fr(ws()):'Semaine en cours'}</button><button data-w="1" aria-label="Semaine suivante" ${weekOff>=0?'disabled':''}>›</button>
  ${calOpen?`<div class="pop">${days().map((d,i)=>`<button class="day ${d===today?'td':''} ${sel===d?'on':''}" data-day="${d}" ${d>today?'disabled':''}><small>${D[i]}</small><b>${d.slice(8)}</b><small>${dq(me.id,d,'v')}/${DAY_MAX}</small></button>`).join('')}<button class="day" data-day=""><small>Toute</small><b>⟲</b><small>semaine</small></button></div>`:''}</div>
  <span class="chip">${KINDS[k].chip} <b>${dn}/${WEEK_MIN}</b> jours · <b>${u}/${KINDS[k].max}</b> aujourd’hui</span>${bell()}<span class="okt">● Accès contrôlé</span>`;
- if(PAGES.find(p=>p[0]===page)[2]){$('#top .chip')?.remove();if(page!=='team')$('#top .wk')?.remove()}
+ if(PAGES.find(p=>p[0]===page)[2]){$('#top .chip')?.remove();if(page!=='team')$('#top .wk')?.remove();if(page!=='admin')$('#top').firstElementChild.outerHTML=subNav()}
 }
 $('#top').onclick=e=>{const t=e.target.closest('button');if(!t)return;
  if(t.dataset.w){weekOff+=+t.dataset.w;sel='';render()}
  else if('cal' in t.dataset){calOpen=!calOpen;topbar()}
  else if('day' in t.dataset){sel=t.dataset.day;calOpen=false;render()}
- else if('bell' in t.dataset)openNotifs()};
+ else if('bell' in t.dataset)openNotifs()
+ else if(t.dataset.p){page=t.dataset.p;sel='';render()}};
 $('#nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;page=b.dataset.p;render()};
 
 const stag=s=>s.st==='p'?'<span class="tag p">À valider</span>':s.st==='v'?'<span class="tag v">Validé</span>':`<span class="tag r">Refusé</span>`;
@@ -483,10 +499,14 @@ $('#fan').onsubmit=async e=>{e.preventDefault();const m=$('#anm').value.trim();i
   $('#dan').close();await loadData();flash('Annonce publiée.')}
  catch(x){console.error(x);flash('Publication refusée : tables manquantes ou droits insuffisants.')}};
 async function rmAnn(){try{const {error}=await sb.from('announcements').delete().not('id','is',null);if(error)throw error;await loadData();flash('Annonce retirée.')}catch(x){console.error(x);flash('Suppression refusée.')}}
-function adTiles(){const pend=subs.filter(s=>s.st==='p').length,inact=users.filter(u=>!u.on).length,away=users.filter(u=>u.on&&absOn(u.id,today)).length;
- return [['valid','✅','Validation',pend?pend+' à traiter':'Tout est à jour',pend],['history','📜','Historique','Preuves déjà traitées',0],['team','📊','Suivi équipe','Quotas de la semaine',0],['stats','📈','Statistiques','Argent, quotas et classement',0],['absences','🌙','Absences',away?away+' absent'+(away>1?'s':'')+' aujourd’hui':'Personne d’absent',0],['members','👥','Membres',inact?inact+' compte'+(inact>1?'s':'')+' à activer':'Comptes et rangs',inact]]
- .map(([p,i,t,x,n])=>`<div class="tile go"><button class="tl" data-go="${p}"><span class="ti">${i}</span><b>${t}${n?`<span class="dot">${n}</span>`:''}</b><span class="mu">${x}</span></button></div>`).join('')}
-function admin(){return `<div class="head"><div><h2>Administration</h2><div class="mu">Contrôle, suivi et gestion de l’équipe.</div></div></div><div class="tiles" style="margin-top:0">${adTiles()}</div>`}
+function adData(){const pend=subs.filter(s=>s.st==='p').length,inact=users.filter(u=>!u.on).length,away=users.filter(u=>u.on&&absOn(u.id,today)).length;
+ return [['valid','✅','Validation',pend?pend+' à traiter':'Tout est à jour',pend],['history','📜','Historique','Preuves déjà traitées',0],['team','📊','Suivi équipe','Quotas de la semaine',0],['stats','📈','Statistiques','Argent, quotas et classement',0],['absences','🌙','Absences',away?away+' absent'+(away>1?'s':'')+' aujourd’hui':'Personne d’absent',0],['members','👥','Membres',inact?inact+' compte'+(inact>1?'s':'')+' à activer':'Comptes et rangs',inact]]}
+const SUBL=[['valid','Validation'],['history','Historique'],['team','Suivi équipe'],['stats','Statistiques'],['absences','Absences'],['members','Membres']];
+const subNav=()=>`<div class="sub"><button class="back" data-p="admin">← Administration</button>${SUBL.map(([k,l])=>`<button data-p="${k}" class="${k===page?'on':''}">${l}</button>`).join('')}</div>`;
+function adTiles(){return adData().map(([p,i,t,x,n])=>`<div class="tile go"><button class="tl" data-go="${p}"><span class="ti">${i}</span><b>${t}${n?`<span class="dot">${n}</span>`:''}</b><span class="mu">${x}</span></button></div>`).join('')}
+function admin(){const D=adData(),g=a=>D.filter(d=>a.includes(d[0])).map(([p,i,t,x,n])=>`<button class="mc" data-go="${p}"><span class="mi">${i}</span><span><b>${t}${n?`<span class="dot">${n}</span>`:''}</b><span class="mu">${x}</span></span><span class="mg">→</span></button>`).join('');
+ return `<div class="head"><div><h1 style="font-size:26px;margin:0 0 2px">Administration</h1><div class="mu">Contrôle, suivi et gestion de l’équipe.</div></div></div>
+ <div class="hubx"><section class="hg"><h3>Contrôle</h3><div class="mcs">${g(['valid','history'])}</div></section><section class="hg"><h3>Équipe</h3><div class="mcs">${g(['team','stats','absences','members'])}</div></section></div>`}
 const CH=[620,210,46,26,14];
 function bars(v,L){const [w,h,pl,pb,pt]=CH,mx=Math.max(...v,1)*1.1,bw=(w-pl)/v.length;let o=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Argent validé par semaine">`;
  for(let i=0;i<=3;i++){const y=pt+(h-pt-pb)*(1-i/3);o+=`<line x1="${pl}" x2="${w}" y1="${y}" y2="${y}" style="stroke:rgba(255,255,255,.07)"/><text x="${pl-6}" y="${y+4}" text-anchor="end" style="fill:var(--mu)" font-size="10">${Math.round(mx*i/3/1000)}k</text>`}
