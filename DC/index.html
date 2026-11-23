@@ -153,6 +153,9 @@ nav button:hover{color:var(--tx)}nav button.on{color:var(--tx);box-shadow:inset 
 .mc .mg{margin-left:auto;font-size:20px;color:var(--warn);opacity:.6;transition:transform .2s,opacity .2s}.mc:hover .mg{transform:translateX(4px);opacity:1}
 #top:empty{display:none}#top:empty+#view{padding-top:16px}
 @media(min-width:761px){aside{display:grid;grid-template-columns:1fr auto 1fr}nav{justify-content:center;flex:none}.me{justify-self:end;margin-left:0}}
+.brand{align-items:center;gap:12px}.brand img{display:block;flex:none;width:48px;height:48px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px var(--ac),0 4px 14px rgba(0,0,0,.5)}
+.hc{flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;margin:6px 0 24px}
+.hc .ht{font-size:32px;font-weight:700;margin:0 0 4px}.hc .mu{font-size:14px;max-width:640px}
 th[data-sort]{cursor:pointer;user-select:none;white-space:nowrap}th[data-sort]:hover{color:var(--tx)}
 th .ar{margin-left:6px;font-size:10px;opacity:.35}th.on{color:var(--tx)}th.on .ar{opacity:1;color:var(--ac)}
 </style>
@@ -184,7 +187,7 @@ th .ar{margin-left:6px;font-size:10px;opacity:.35}th.on{color:var(--tx)}th.on .a
 
 <div id="app" class="hide">
  <aside>
-  <div class="brand"><div><b>Los Sicarios</b><small>MANAGEMENT</small></div></div>
+  <div class="brand"><img class="lg" alt=""><div><b>Los Sicarios</b><small>MANAGEMENT</small></div></div>
   <nav id="nav"></nav>
   <div class="me"><div><b id="mn"></b><br><small class="mu" id="mr"></small></div><span id="bl"></span><button class="gh sm" id="out">Quitter</button></div>
  </aside>
@@ -379,7 +382,7 @@ function activity(k){
  const note=s=>`${esc(s.note||'—')}${s.reason?`<br><span style="color:#ff7d92">Motif : ${esc(s.reason)}</span>`:''}`;
  const row=s=>pic?`<tr><td><img class="th" src="${s.photo}" data-img="${s.id}" alt="Preuve"></td><td>${fr(s.date)}</td><td class="n">${s.qty}</td><td class="mu">${note(s)}</td><td>${stag(s)}</td></tr>`
   :`<tr><td>${fr(s.date)}</td><td class="n">${s.qty}</td><td class="n">${fmt(s.amt)}</td><td class="mu">${note(s)}</td><td>${stag(s)}</td></tr>`;
- return `<div class="head"><div><h2>${K.title}</h2><div class="mu">${K.max} ${K.unit} par jour · ${WEEK_MIN} jours complets minimum par semaine · ${pic?'photo obligatoire.':'déclare le montant récolté (sans photo).'}</div></div><button class="btn" id="add" data-k="${k}">+ Déclarer</button></div>
+ return `<div class="head hc"><div><h2 class="ht">${K.title}</h2><div class="mu">${K.max} ${K.unit} par jour · ${WEEK_MIN} jours complets minimum par semaine · ${pic?'photo obligatoire.':'déclare le montant récolté (sans photo).'}</div></div><button class="btn" id="add" data-k="${k}">+ Déclarer</button></div>
  <div class="kpis">
   <div class="card"><span class="mu">Jours complets (validés)</span><div class="v">${dn} / ${WEEK_MIN}</div><span class="mu">${ok?'Quota minimum atteint':'Il te manque '+(WEEK_MIN-dn)+' jour'+(WEEK_MIN-dn>1?'s':'')}</span><div class="bar"><i class="${ok?'ok':''}" style="width:${Math.min(100,dn/WEEK_MIN*100)}%"></i></div></div>
   <div class="card"><span class="mu">Aujourd’hui</span><div class="v">${used} / ${K.max}</div><span class="mu">Un jour est complet à ${K.max} ${K.unit} validés</span><div class="bar"><i style="width:${Math.min(100,used/K.max*100)}%"></i></div></div>
@@ -508,7 +511,7 @@ const SUBL=[['valid','Validation'],['history','Historique'],['team','Suivi équi
 const subNav=()=>`<div class="sub"><button class="back" data-p="admin">← Administration</button>${SUBL.map(([k,l])=>`<button data-p="${k}" class="${k===page?'on':''}">${l}</button>`).join('')}</div>`;
 function adTiles(){return adData().map(([p,i,t,x,n])=>`<div class="tile go"><button class="tl" data-go="${p}"><span class="ti">${i}</span><b>${t}${n?`<span class="dot">${n}</span>`:''}</b><span class="mu">${x}</span></button></div>`).join('')}
 function admin(){const D=adData(),g=a=>D.filter(d=>a.includes(d[0])).map(([p,i,t,x,n])=>`<button class="mc" data-go="${p}"><span class="mi">${i}</span><span><b>${t}${n?`<span class="dot">${n}</span>`:''}</b><span class="mu">${x}</span></span><span class="mg">→</span></button>`).join('');
- return `<div class="head"><div><h1 style="font-size:26px;margin:0 0 2px">Administration</h1><div class="mu">Contrôle, suivi et gestion de l’équipe.</div></div></div>
+ return `<div class="head hc"><div><h2 class="ht">Administration</h2><div class="mu">Contrôle, suivi et gestion de l’équipe.</div></div></div>
  <div class="hubx"><section class="hg"><h3>Contrôle</h3><div class="mcs">${g(['valid','history'])}</div></section><section class="hg"><h3>Équipe</h3><div class="mcs">${g(['team','stats','absences','members'])}</div></section></div>`}
 const CH=[620,210,46,26,14];
 function bars(v,L){const [w,h,pl,pb,pt]=CH,mx=Math.max(...v,1)*1.1,bw=(w-pl)/v.length;let o=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Argent validé par semaine">`;
@@ -544,7 +547,7 @@ function stats(){
  <div class="card"><b>Quotas atteints par semaine</b><div class="mu">Part des activités à ${WEEK_MIN} jours complets ou plus</div>${line(sl.map(w=>{const r=w.rows.filter(canQ),t=r.length*3;return t?sum(r.map(x=>Object.values(x.days).filter(d=>d>=WEEK_MIN).length))/t*100:0}),L)}</div></div>
  <div class="dd t"><div class="card"><b>Par activité</b><div class="mu" style="margin-bottom:12px">Sur la période choisie</div>${act}</div>
  <div class="card" style="padding:0"><div style="padding:14px 14px 0"><b>Classement des membres</b><div class="mu">Trié par argent validé</div></div><div class="tw"><table><thead><tr><th>#</th><th>Membre</th><th class="n">Jours complets</th><th class="n">Argent</th><th>Quotas</th><th>Tendance</th></tr></thead><tbody>
- ${R.map((r,i)=>`<tr><td class="mu">${['🥇','🥈','🥉'][i]||i+1}</td><td>${esc(r.n)}${r.q!==null&&r.q<40?' <span class="tag p">À surveiller</span>':''}</td><td class="n">${r.days}</td><td class="n">${fmt(r.money)}</td><td>${r.q===null?'<span class="mu">Absent</span>':`<span class="mini"><i style="width:${r.q}%"></i></span>${r.q.toFixed(0)} %`}</td><td class="${r.t>=0?'up':'dn'}">${r.t>=10?'▲ en hausse':r.t<=-10?'▼ en baisse':'<span class="mu">● stable</span>'}</td></tr>`).join('')||'<tr><td colspan="6" class="mu">Aucun membre actif.</td></tr>'}
+ ${R.map((r,i)=>`<tr><td class="mu">${['🥇','🥈','🥉'][i]||i+1}</td><td>${esc(r.n)}</td><td class="n">${r.days}</td><td class="n">${fmt(r.money)}</td><td>${r.q===null?'<span class="mu">Absent</span>':`<span class="mini"><i style="width:${r.q}%"></i></span>${r.q.toFixed(0)} %`}</td><td class="${r.t>=0?'up':'dn'}">${r.t>=10?'▲ en hausse':r.t<=-10?'▼ en baisse':'<span class="mu">● stable</span>'}</td></tr>`).join('')||'<tr><td colspan="6" class="mu">Aucun membre actif.</td></tr>'}
  </tbody></table></div></div></div>`}
 function members(){
  const can=u=>u.rank>me.rank;
