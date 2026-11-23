@@ -410,7 +410,7 @@ function home(){
  </div></div>`}
 function valid(){
  const l=subs.filter(s=>s.st==='p');
- return `<div class="head"><div><h2>Validation des preuves</h2><div class="mu">Contrôle les preuves et les montants avant de valider.</div></div></div>
+ return `<div class="head hc"><div><h2 class="ht">Validation des preuves</h2><div class="mu">Contrôle les preuves et les montants avant de valider.</div></div></div>
  <div class="card" style="padding:0"><div class="tw"><table><thead><tr><th>Preuve</th><th>Membre</th><th>Type</th><th>Jour</th><th class="n">Quantité</th><th class="n">Argent</th><th>Note</th><th></th></tr></thead><tbody>
  ${l.map(s=>{const u=byId(s.uid),pic=s.kind==='container';return `<tr><td>${pic?`<img class="th" src="${s.photo}" data-img="${s.id}" alt="Preuve">`:'<span class="mu">—</span>'}</td><td>${esc(u.name)} <span class="mu">· ${rk(u)}</span></td><td><span class="tag rk">${KINDS[s.kind].tag}</span></td><td>${fr(s.date)}</td><td class="n">${s.qty}</td><td class="n">${pic?'<span class="mu">—</span>':fmt(s.amt)}</td><td class="mu">${esc(s.note||'—')}</td>
  <td class="n"><button class="btn sm" data-ok="${s.id}">Valider</button> <button class="gh sm" data-no="${s.id}">Refuser</button></td></tr>`}).join('')||'<tr><td colspan="8" class="mu">Rien à valider pour le moment.</td></tr>'}
@@ -427,7 +427,7 @@ function history(){
  const H=`<th>Preuve</th>${sth('h','member','Membre')}${sth('h','type','Type')}${sth('h','day','Jour','',-1)}${sth('h','qty','Quantité','n',-1)}${sth('h','amt','Argent','n',-1)}${sth('h','st','Statut')}${sth('h','by','Traité par')}${sth('h','when','Le','',-1)}`;
  const tot=l.length,sh=l.slice(0,200);
  const when=s=>s.vat?new Date(s.vat).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
- return `<div class="head"><div><h2>Historique des preuves</h2><div class="mu">Toutes les déclarations traitées, avec la personne qui les a validées ou refusées.</div></div></div>
+ return `<div class="head hc"><div><h2 class="ht">Historique des preuves</h2><div class="mu">Toutes les déclarations traitées, avec la personne qui les a validées ou refusées.</div></div></div>
  <div class="head" style="margin-bottom:12px"><div class="seg">${[['all','Tous'],['v','Validés'],['r','Refusés']].map(([v,t])=>`<button data-hf="${v}" class="${hf===v?'on':''}">${t}</button>`).join('')}</div>
  <select data-hm style="width:auto;max-width:240px" aria-label="Filtrer par membre"><option value="">Tous les membres</option>${[...users].sort((a,b)=>a.name.localeCompare(b.name)).map(u=>`<option value="${u.id}" ${hm===u.id?'selected':''}>${esc(u.name)}</option>`).join('')}</select></div>
  <div class="card" style="padding:0"><div class="tw"><table style="min-width:920px"><thead><tr>${H}</tr></thead><tbody>
@@ -440,7 +440,7 @@ function team(){
  const sc=k=>u=>daysDone(u.id,k)*1000+wkTot(u.id,'v',k);
  const tl=srt(users.filter(u=>u.on),'t',{name:u=>u.name,rank:u=>u.rank,container:sc('container'),atm:sc('atm'),superette:sc('superette'),money:u=>wkMoney(u.id,'v'),pend:u=>wkPend(u.id)});
  const T=`${sth('t','name','Membre')}${sth('t','rank','Rang')}${sth('t','container','Conteneurs (jours)','n',-1)}${sth('t','atm','ATM (jours)','n',-1)}${sth('t','superette','Supérettes (jours)','n',-1)}${sth('t','money','Argent validé','n',-1)}${sth('t','pend','En attente','n',-1)}`;
- return `<div class="head"><div><h2>Suivi équipe</h2><div class="mu">Semaine du ${fr(ws())} · minimum ${WEEK_MIN} jours complets par activité (${DAY_MAX} conteneurs, ${KINDS.atm.max} ATM ou ${KINDS.superette.max} supérettes par jour).</div></div></div>
+ return `<div class="head hc"><div><h2 class="ht">Suivi équipe</h2><div class="mu">Semaine du ${fr(ws())} · minimum ${WEEK_MIN} jours complets par activité (${DAY_MAX} conteneurs, ${KINDS.atm.max} ATM ou ${KINDS.superette.max} supérettes par jour).</div></div></div>
  <div class="card" style="padding:0"><div class="tw"><table style="min-width:780px"><thead><tr>${T}</tr></thead><tbody>
  ${tl.map(u=>{const gone=days().filter(d=>absOn(u.id,d)),ab0=gone.length?absOn(u.id,gone[0]):null;
   const who=esc(u.name)+(ab0?`<div style="margin-top:3px"><span class="tag ab">Absent · ${gone.length===7?'semaine entière':gone.map(d=>D[days().indexOf(d)]).join(', ')}</span>${ab0.reason?`<div class="mu" style="font-size:11px;margin-top:3px">${esc(ab0.reason)}</div>`:''}</div>`:'');
@@ -462,7 +462,7 @@ alter publication supabase_realtime add table public.absences;`;
 function absences(){
  const stt=a=>a.to<today?'<span class="tag gr">Terminée</span>':a.from>today?'<span class="tag p">À venir</span>':'<span class="tag ab">En cours</span>';
  const mem=[...users].filter(u=>u.on).sort((a,b)=>a.name.localeCompare(b.name,'fr'));
- return `<div class="head"><div><h2>Absences</h2><div class="mu">Déclare les membres absents : leur ligne apparaît en gris jaunâtre dans le Suivi équipe.</div></div></div>
+ return `<div class="head hc"><div><h2 class="ht">Absences</h2><div class="mu">Déclare les membres absents : leur ligne apparaît en gris jaunâtre dans le Suivi équipe.</div></div></div>
  ${absOk?'':`<div class="card" style="margin-bottom:14px;box-shadow:inset 0 0 0 1px var(--warn)"><b style="color:var(--warn)">Table « absences » introuvable dans Supabase.</b><div class="mu" style="margin:6px 0">Exécute ce SQL une fois dans Supabase (SQL Editor), puis recharge la page.</div><pre style="white-space:pre-wrap;background:var(--p2);border-radius:8px;padding:10px;font-size:11px;margin:0;overflow:auto">${esc(ABS_SQL)}</pre></div>`}
  <form id="fab" class="card" style="padding:0;margin-bottom:14px"><div class="abf">
   <div><label for="am1">Membre</label><select id="am1" name="m" required><option value="">Choisir…</option>${mem.map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join('')}</select></div>
@@ -522,7 +522,7 @@ function line(v,L){const [w,h,pl,pb,pt]=CH,st=(w-pl)/v.length,X=i=>pl+st*i+st/2,
  const pts=v.map((x,i)=>X(i)+','+Y(x)).join(' ');
  o+=`<polygon points="${X(0)},${Y(0)} ${pts} ${X(v.length-1)},${Y(0)}" style="fill:color-mix(in srgb,var(--ok) 12%,transparent)"/><polyline points="${pts}" fill="none" style="stroke:var(--ok)" stroke-width="2.5" stroke-linejoin="round"/>`;
  v.forEach((x,i)=>o+=`<circle cx="${X(i)}" cy="${Y(x)}" r="4" style="fill:var(--ok)"><title>${L[i]} : ${Math.round(x)} %</title></circle><text x="${X(i)}" y="${h-8}" text-anchor="middle" style="fill:var(--mu)" font-size="10">${L[i]}</text>`);return o+'</svg>'}
-let sper=6;
+let sper=4;
 const canQ=r=>r.ab<=7-WEEK_MIN;
 function wkData(n){return Array.from({length:n},(_,i)=>{const st=add(wkStart(today),-7*(n-1-i)),ds=[0,1,2,3,4,5,6].map(j=>add(st,j)),end=new Date(add(st,7)+'T00:00:00').getTime();
  return{st,rows:users.filter(u=>u.on&&!(new Date(u.at).getTime()>end)).map(u=>{const r={u,ab:ds.filter(d=>absOn(u.id,d)).length,days:{}};
@@ -540,8 +540,8 @@ function stats(){
  const R=users.filter(u=>u.on).map(u=>{let money=0,days=0,ok=0,pr=0,h1=0,h2=0,c1=0,c2=0;sl.forEach((w,i)=>{const r=w.rows.find(x=>x.u.id===u.id);if(!r)return;money+=r.money;const v=Object.values(r.days);days+=sum(v);
    if(canQ(r))v.forEach(x=>{pr++;const f=i<sper/2;f?c1++:c2++;if(x>=WEEK_MIN){ok++;f?h1++:h2++}})});
   return{n:u.name,money,days,q:pr?ok/pr*100:null,t:c1&&c2?(h2/c2-h1/c1)*100:0}}).sort((a,b)=>b.money-a.money);
- return `<div class="head"><div><h2>Statistiques</h2><div class="mu">Du ${L[0]} à la semaine en cours · ${nm} membre${nm>1?'s':''} actif${nm>1?'s':''} · les semaines d’absence (4 jours ou plus) ne comptent pas dans les quotas.</div></div>
- <div class="seg">${[4,6,12].map(x=>`<button data-sn="${x}" class="${x===sper?'on':''}">${x} semaines</button>`).join('')}</div></div>
+ return `<div class="head hc"><div><h2 class="ht">Statistiques</h2><div class="mu">Du ${L[0]} à la semaine en cours · ${nm} membre${nm>1?'s':''} actif${nm>1?'s':''} · les semaines d’absence (4 jours ou plus) ne comptent pas dans les quotas.</div></div>
+ <div class="seg">${[1,4,12].map(x=>`<button data-sn="${x}" class="${x===sper?'on':''}">${x} semaine${x>1?'s':''}</button>`).join('')}</div></div>
  <div class="kpis">${K.map(([t,v,d])=>`<div class="card"><span class="mu">${t}</span><div class="v">${v}</div>${d}</div>`).join('')}</div>
  <div class="dd"><div class="card"><b>Argent validé par semaine</b><div class="mu">ATM et supérettes</div>${bars(sl.map(w=>sum(w.rows.map(r=>r.money))),L)}</div>
  <div class="card"><b>Quotas atteints par semaine</b><div class="mu">Part des activités à ${WEEK_MIN} jours complets ou plus</div>${line(sl.map(w=>{const r=w.rows.filter(canQ),t=r.length*3;return t?sum(r.map(x=>Object.values(x.days).filter(d=>d>=WEEK_MIN).length))/t*100:0}),L)}</div></div>
@@ -551,7 +551,7 @@ function stats(){
  </tbody></table></div></div></div>`}
 function members(){
  const can=u=>u.rank>me.rank;
- return `<div class="head"><div><h2>Membres</h2><div class="mu">Comptes créés, activation et hiérarchie. Nom RP et Discord visibles par la direction. Le PIN n’est jamais affiché ni stocké dans le profil.</div></div></div>
+ return `<div class="head hc"><div><h2 class="ht">Membres</h2><div class="mu">Comptes créés, activation et hiérarchie. Nom RP et Discord visibles par la direction. Le PIN n’est jamais affiché ni stocké dans le profil.</div></div></div>
  <div class="card" style="padding:0"><div class="tw"><table><thead><tr><th>Nom RP</th><th>Discord</th><th>Rang</th><th>Compte</th><th></th></tr></thead><tbody>
  ${[...users].sort((a,b)=>a.on-b.on||a.rank-b.rank).map(u=>`<tr><td>${esc(u.name)}</td><td class="mu">${esc(u.discord||'—')}</td>
  <td>${can(u)&&u.on?`<select data-rk="${u.id}" style="width:auto">${RANKS.map((r,i)=>i>me.rank?`<option value="${i}" ${i===u.rank?'selected':''}>${r}</option>`:'').join('')}</select>`:`<span class="tag rk">${rk(u)}</span>`}</td>
@@ -560,7 +560,7 @@ function members(){
  </tbody></table></div></div>`}
 function settings(){
  const seg=(k,o)=>`<div class="seg">${o.map(([v,l])=>`<button data-s="${k}" data-v="${v}" class="${S[k]===v?'on':''}">${l}</button>`).join('')}</div>`;
- return `<div class="head"><div><h2>Paramètres</h2><div class="mu">Apparence du site, enregistrée sur cet appareil.</div></div></div><div class="set">
+ return `<div class="head hc"><div><h2 class="ht">Paramètres</h2><div class="mu">Apparence du site, enregistrée sur cet appareil.</div></div></div><div class="set">
  <div class="card"><b>Couleur signature</b><div class="seg">${COLS.map(([n,c])=>`<button class="sw ${S.color===c?'on':''}" style="--c:${c}" data-col="${c}" title="${n}" aria-label="${n}"></button>`).join('')}</div></div>
  <div class="card"><b>Luminosité</b><input type="range" id="bri" min="60" max="130" value="${S.bright}" aria-label="Luminosité"><div class="hint">${S.bright}%</div></div>
  <div class="card"><b>Fond décoratif</b>${seg('deco',[['none','Aucun'],['grid','Grille'],['halo','Halo']])}</div>
