@@ -264,7 +264,7 @@ async function rpEmail(key){let hex;
  return 'rp-'+hex+'@los-sicarios.app'}
 const uuid=()=>window.crypto&&crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16)});
 function rpPassword(pin){return 'LS!'+pin}
-function isAdmin(u){return !!u&&u.rank<=ADMIN_MAX}
+function isAdmin(u){return !!u&&!!u.adm}
 const ws=()=>add(wkStart(today),7*weekOff),days=()=>[0,1,2,3,4,5,6].map(i=>add(ws(),i));
 const rk=u=>u.rank<0?'':(RANKS[u.rank]||'Recrue'),byId=id=>users.find(u=>u.id===id)||{name:'(supprimé)',rank:6};
 const dq=(id,d,st,k='container')=>subs.filter(s=>s.uid===id&&s.date===d&&s.kind===k&&(st?s.st===st:s.st!=='r')).reduce((a,s)=>a+s.qty,0);
@@ -276,7 +276,7 @@ const absOn=(id,d)=>absn.find(a=>a.uid===id&&a.from<=d&&d<=a.to);
 const fmt=n=>Number(n||0).toLocaleString('fr-FR')+' $';
 async function loadData(){
  const [{data:ps,error:pe},{data:ss,error:se},{data:ab,error:ae},{data:an,error:ane},{data:nt,error:nte}]=await Promise.all([
-  sb.from('profiles').select('id,rp_name,rp_key,discord,rank,active,created_at'),
+  sb.from('profiles').select('id,rp_name,rp_key,discord,rank,active,created_at,admin'),
   sb.from('submissions').select('id,user_id,work_date,quantity,photo_path,note,status,reason,created_at,kind,amount,validated_by,validated_at').order('created_at',{ascending:false}),
   sb.from('absences').select('id,user_id,start_date,end_date,reason').order('start_date',{ascending:false}),
   sb.from('announcements').select('id,message,author_id,created_at').order('created_at',{ascending:false}).limit(1),
@@ -289,7 +289,7 @@ async function loadData(){
  if(meId)seenN=new Set(notifs.map(n=>n.id));
  absOk=!ae;absn=(ab||[]).map(x=>({id:x.id,uid:x.user_id,from:x.start_date,to:x.end_date,reason:x.reason||''}));
  if(pe)throw pe;if(se)throw se;
- users=(ps||[]).map(x=>({id:x.id,name:x.rp_name,key:x.rp_key,discord:x.discord||'',rank:x.rank,on:x.active,at:x.created_at}));
+ users=(ps||[]).map(x=>({id:x.id,name:x.rp_name,key:x.rp_key,discord:x.discord||'',rank:x.rank,on:x.active,at:x.created_at,adm:!!x.admin}));
  const paths=(ss||[]).map(x=>x.photo_path).filter(Boolean),urls={};
  if(paths.length){const {data:sg}=await sb.storage.from('proofs').createSignedUrls(paths,3600);(sg||[]).forEach(u=>{if(u.signedUrl)urls[u.path]=u.signedUrl})}
  subs=(ss||[]).map(x=>({id:x.id,uid:x.user_id,date:x.work_date,qty:x.quantity,kind:x.kind||'container',amt:Number(x.amount)||0,photo:urls[x.photo_path]||'',photo_path:x.photo_path,note:x.note||'',st:x.status,reason:x.reason||'',at:new Date(x.created_at).getTime(),by:x.validated_by||'',vat:x.validated_at?new Date(x.validated_at).getTime():0}));
@@ -551,11 +551,11 @@ function stats(){
  ${R.map((r,i)=>`<tr><td class="mu">${['🥇','🥈','🥉'][i]||i+1}</td><td>${esc(r.n)}</td><td class="n">${r.days}</td><td class="n">${fmt(r.money)}</td><td>${r.q===null?'<span class="mu">Absent</span>':`<span class="mini"><i style="width:${r.q}%"></i></span>${r.q.toFixed(0)} %`}</td><td class="${r.t>=0?'up':'dn'}">${r.t>=10?'▲ en hausse':r.t<=-10?'▼ en baisse':'<span class="mu">● stable</span>'}</td></tr>`).join('')||'<tr><td colspan="6" class="mu">Aucun membre actif.</td></tr>'}
  </tbody></table></div></div></div>`}
 function members(){
- const can=u=>u.rank>me.rank;
+ const can=u=>!u.adm;
  return `<div class="head hc"><div><h2 class="ht">Membres</h2><div class="mu">Comptes créés, activation et hiérarchie. Nom RP et Discord visibles par la direction. Le PIN n’est jamais affiché ni stocké dans le profil.</div></div></div>
  <div class="card" style="padding:0"><div class="tw"><table><thead><tr><th>Nom RP</th><th>Discord</th><th>Rang</th><th>Compte</th><th></th></tr></thead><tbody>
  ${[...users].sort((a,b)=>a.on-b.on||a.rank-b.rank).map(u=>`<tr><td>${esc(u.name)}</td><td class="mu">${esc(u.discord||'—')}</td>
- <td>${can(u)&&u.on?`<select data-rk="${u.id}" style="width:auto">${RANKS.map((r,i)=>i>me.rank?`<option value="${i}" ${i===u.rank?'selected':''}>${r}</option>`:'').join('')}</select>`:`<span class="tag rk">${rk(u)}</span>`}</td>
+ <td>${can(u)&&u.on?`<select data-rk="${u.id}" style="width:auto">${RANKS.map((r,i)=>i>=0?`<option value="${i}" ${i===u.rank?'selected':''}>${r}</option>`:'').join('')}</select>`:`<span class="tag rk">${rk(u)}</span>`}</td>
  <td>${u.on?'<span class="tag v">Actif</span>':'<span class="tag p">En attente</span>'}</td>
  <td class="n">${can(u)?(u.on?`<button class="gh sm" data-off="${u.id}">Désactiver</button>`:`<button class="btn sm" data-on="${u.id}">Activer</button>`):''}</td></tr>`).join('')||'<tr><td colspan="5" class="mu">Aucun compte.</td></tr>'}
  </tbody></table></div></div>`}
