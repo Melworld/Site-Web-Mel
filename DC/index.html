@@ -151,6 +151,8 @@ nav button:hover{color:var(--tx)}nav button.on{color:var(--tx);box-shadow:inset 
 .mc .mi{flex:none;font-size:30px;width:58px;height:58px;display:grid;place-items:center;border-radius:16px;background:color-mix(in srgb,var(--warn) 14%,transparent);transform:rotate(-5deg);transition:transform .2s}
 .mc:hover .mi{transform:rotate(0)}.mc b{font-size:15px;display:flex;align-items:center;gap:8px}.mc .mu{display:block;margin-top:2px}
 .mc .mg{margin-left:auto;font-size:20px;color:var(--warn);opacity:.6;transition:transform .2s,opacity .2s}.mc:hover .mg{transform:translateX(4px);opacity:1}
+#top:empty{display:none}#top:empty+#view{padding-top:16px}
+@media(min-width:761px){aside{display:grid;grid-template-columns:1fr auto 1fr}nav{justify-content:center;flex:none}.me{justify-self:end;margin-left:0}}
 th[data-sort]{cursor:pointer;user-select:none;white-space:nowrap}th[data-sort]:hover{color:var(--tx)}
 th .ar{margin-left:6px;font-size:10px;opacity:.35}th.on{color:var(--tx)}th.on .ar{opacity:1;color:var(--ac)}
 </style>
@@ -184,7 +186,7 @@ th .ar{margin-left:6px;font-size:10px;opacity:.35}th.on{color:var(--tx)}th.on .a
  <aside>
   <div class="brand"><div><b>Los Sicarios</b><small>MANAGEMENT</small></div></div>
   <nav id="nav"></nav>
-  <div class="me"><div><b id="mn"></b><br><small class="mu" id="mr"></small></div><button class="gh sm" id="out">Quitter</button></div>
+  <div class="me"><div><b id="mn"></b><br><small class="mu" id="mr"></small></div><span id="bl"></span><button class="gh sm" id="out">Quitter</button></div>
  </aside>
  <main><div id="top"></div><div id="view"></div></main>
 </div>
@@ -348,14 +350,15 @@ function render(){
  
  $('#view').innerHTML={home,mine:()=>activity('container'),atm:()=>activity('atm'),superette:()=>activity('superette'),valid,history,team,absences,stats,admin,members,settings}[page]();topbar()}
 function topbar(){
- if(page==='home'){$('#top').innerHTML='<span>Accueil</span><span class="sp"></span>'+bell()+'<span class="okt">● Accès contrôlé</span>';return}
+ if(page==='home'){$('#top').innerHTML='';$('#bl').innerHTML=bell();return}
  const k=page==='atm'||page==='superette'?page:'container',dn=daysDone(me.id,k),u=dq(me.id,today,null,k);
- $('#top').innerHTML=`<span>${PAGES.find(p=>p[0]===page)[2]&&page!=='admin'?'Administration / ':''}${PAGES.find(p=>p[0]===page)[1]}</span><span class="sp"></span>
+ $('#top').innerHTML=`<span></span><span class="sp"></span>
  <div class="wk"><button data-w="-1" aria-label="Semaine précédente">‹</button><button data-cal>${weekOff?'Semaine du '+fr(ws()):'Semaine en cours'}</button><button data-w="1" aria-label="Semaine suivante" ${weekOff>=0?'disabled':''}>›</button>
  ${calOpen?`<div class="pop">${days().map((d,i)=>`<button class="day ${d===today?'td':''} ${sel===d?'on':''}" data-day="${d}" ${d>today?'disabled':''}><small>${D[i]}</small><b>${d.slice(8)}</b><small>${dq(me.id,d,'v')}/${DAY_MAX}</small></button>`).join('')}<button class="day" data-day=""><small>Toute</small><b>⟲</b><small>semaine</small></button></div>`:''}</div>
- <span class="chip">${KINDS[k].chip} <b>${dn}/${WEEK_MIN}</b> jours · <b>${u}/${KINDS[k].max}</b> aujourd’hui</span>${bell()}<span class="okt">● Accès contrôlé</span>`;
- if(PAGES.find(p=>p[0]===page)[2]){$('#top .chip')?.remove();if(page!=='team')$('#top .wk')?.remove();if(page!=='admin')$('#top').firstElementChild.outerHTML=subNav()}
+ <span class="chip">${KINDS[k].chip} <b>${dn}/${WEEK_MIN}</b> jours · <b>${u}/${KINDS[k].max}</b> aujourd’hui</span>`;$('#bl').innerHTML=bell();
+ if(PAGES.find(p=>p[0]===page)[2]){$('#top .chip')?.remove();if(page!=='team')$('#top .wk')?.remove();if(page==='admin')$('#top').innerHTML='';else $('#top').firstElementChild.outerHTML=subNav()}
 }
+$('#bl').onclick=e=>{if(e.target.closest('[data-bell]'))openNotifs()};
 $('#top').onclick=e=>{const t=e.target.closest('button');if(!t)return;
  if(t.dataset.w){weekOff+=+t.dataset.w;sel='';render()}
  else if('cal' in t.dataset){calOpen=!calOpen;topbar()}
