@@ -125,6 +125,17 @@ tbody tr.abs td{background:rgba(150,138,86,.22);color:#cfc7a3}tbody tr.abs td .m
 .ni.un{box-shadow:inset 3px 0 0 var(--ac);background:var(--acd)}
 textarea{width:100%;background:var(--p2);border:0;border-radius:8px;padding:9px 12px;font:inherit;color:inherit;resize:vertical;min-height:84px}
 @media(prefers-reduced-motion:reduce){.ann{animation:none!important}}
+#app{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+aside{flex-direction:row;align-items:center;gap:14px;padding:8px 20px;background:var(--pn);overflow-x:auto;box-shadow:0 1px 0 rgba(255,255,255,.06)}
+.brand{flex-direction:row;padding:0;text-align:left;gap:10px}.brand img{height:44px}
+nav{flex-direction:row;flex:1;gap:4px}nav button{white-space:nowrap;gap:8px;align-items:center}
+.me{margin-left:auto;white-space:nowrap}main{min-height:0}
+.duo{grid-template-columns:1fr}.big{min-height:0}
+.d{font-size:12px}.up{color:var(--ok)}.dn{color:#ff7d92}
+.dd{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.dd.t{grid-template-columns:1fr 2fr}
+.mini{display:inline-block;width:70px;height:5px;background:var(--p2);border-radius:3px;vertical-align:middle;margin-right:8px;overflow:hidden}.mini i{display:block;height:100%;background:var(--ok)}
+.card svg{display:block;margin-top:10px}
+@media(max-width:860px){.dd,.dd.t{grid-template-columns:1fr}}
 th[data-sort]{cursor:pointer;user-select:none;white-space:nowrap}th[data-sort]:hover{color:var(--tx)}
 th .ar{margin-left:6px;font-size:10px;opacity:.35}th.on{color:var(--tx)}th.on .ar{opacity:1;color:var(--ac)}
 </style>
@@ -309,25 +320,27 @@ async function boot(){
   if(session){const u=users.find(x=>x.id===session.user.id);if(u?.on)enter(u.id,true);else if(u)await sb.auth.signOut()}
   sb.channel('sicarios-live').on('postgres_changes',{event:'*',schema:'public',table:'profiles'},()=>loadData().catch(console.error)).on('postgres_changes',{event:'*',schema:'public',table:'submissions'},()=>loadData().catch(console.error)).on('postgres_changes',{event:'*',schema:'public',table:'absences'},()=>loadData().catch(console.error)).on('postgres_changes',{event:'*',schema:'public',table:'announcements'},()=>loadData().catch(console.error)).on('postgres_changes',{event:'*',schema:'public',table:'notifications'},()=>loadData().catch(console.error)).subscribe();
   if(!me)setMsg('Connecte-toi avec ton Nom RP et ton code PIN.');
- }catch(e){console.error(e);setMsg(e.message||'Impossible de joindre la base de donnée.')}
+ }catch(e){console.error(e);setMsg(e.message||'Impossible de joindre Supabase.')}
 }
 boot();
-const PAGES=[['home','Accueil',0],['mine','Mes conteneurs',0],['atm','Mes ATM',0],['superette','Mes Supérettes',0],['settings','Paramètres',0],['valid','Validation des preuves',1],['history','Historique',1],['team','Suivi équipe',1],['absences','Absences',1],['members','Membres',1]];
+const PAGES=[['home','Accueil',0],['mine','Mes conteneurs',0],['atm','Mes ATM',0],['superette','Mes Supérettes',0],['settings','Paramètres',0],['admin','Administration',1],['valid','Validation des preuves',1],['history','Historique',1],['team','Suivi équipe',1],['stats','Statistiques',1],['absences','Absences',1],['members','Membres',1]];
 function render(){
  const adm=isAdmin(me),pend=subs.filter(s=>s.st==='p').length,inact=users.filter(u=>!u.on).length;
  if(PAGES.find(p=>p[0]===page)[2]&&!adm)page='mine';
  $('#mn').textContent=me.name;$('#mr').textContent=rk(me);
- $('#nav').innerHTML=PAGES.filter(p=>!p[2]||adm).map(([k,l])=>{const n=k==='valid'?pend:k==='members'?inact:0;
-  return `<button data-p="${k}" class="${k===page?'on':''}"><span>${l}</span>${n?`<em>${n}</em>`:''}</button>`}).join('');
- const f=$('#nav [data-p=valid]');if(f)f.insertAdjacentHTML('beforebegin','<div class="grp">Administration</div>');
- $('#view').innerHTML={home,mine:()=>activity('container'),atm:()=>activity('atm'),superette:()=>activity('superette'),valid,history,team,absences,members,settings}[page]();topbar()}
+ $('#nav').innerHTML=PAGES.filter(p=>!p[2]||(adm&&p[0]==='admin')).map(([k,l])=>{const n=k==='admin'?pend+inact:0,on=k===page||(k==='admin'&&PAGES.find(q=>q[0]===page)[2]);
+  return `<button data-p="${k}" class="${on?'on':''}"><span>${l}</span>${n?`<em>${n}</em>`:''}</button>`}).join('');
+ 
+ $('#view').innerHTML={home,mine:()=>activity('container'),atm:()=>activity('atm'),superette:()=>activity('superette'),valid,history,team,absences,stats,admin,members,settings}[page]();topbar()}
 function topbar(){
  if(page==='home'){$('#top').innerHTML='<span>Accueil</span><span class="sp"></span>'+bell()+'<span class="okt">● Accès contrôlé</span>';return}
  const k=page==='atm'||page==='superette'?page:'container',dn=daysDone(me.id,k),u=dq(me.id,today,null,k);
- $('#top').innerHTML=`<span>${PAGES.find(p=>p[0]===page)[2]?'Administration / ':''}${PAGES.find(p=>p[0]===page)[1]}</span><span class="sp"></span>
+ $('#top').innerHTML=`<span>${PAGES.find(p=>p[0]===page)[2]&&page!=='admin'?'Administration / ':''}${PAGES.find(p=>p[0]===page)[1]}</span><span class="sp"></span>
  <div class="wk"><button data-w="-1" aria-label="Semaine précédente">‹</button><button data-cal>${weekOff?'Semaine du '+fr(ws()):'Semaine en cours'}</button><button data-w="1" aria-label="Semaine suivante" ${weekOff>=0?'disabled':''}>›</button>
  ${calOpen?`<div class="pop">${days().map((d,i)=>`<button class="day ${d===today?'td':''} ${sel===d?'on':''}" data-day="${d}" ${d>today?'disabled':''}><small>${D[i]}</small><b>${d.slice(8)}</b><small>${dq(me.id,d,'v')}/${DAY_MAX}</small></button>`).join('')}<button class="day" data-day=""><small>Toute</small><b>⟲</b><small>semaine</small></button></div>`:''}</div>
- <span class="chip">${KINDS[k].chip} <b>${dn}/${WEEK_MIN}</b> jours · <b>${u}/${KINDS[k].max}</b> aujourd’hui</span>${bell()}<span class="okt">● Accès contrôlé</span>`}
+ <span class="chip">${KINDS[k].chip} <b>${dn}/${WEEK_MIN}</b> jours · <b>${u}/${KINDS[k].max}</b> aujourd’hui</span>${bell()}<span class="okt">● Accès contrôlé</span>`;
+ if(PAGES.find(p=>p[0]===page)[2]){$('#top .chip')?.remove();if(page!=='team')$('#top .wk')?.remove()}
+}
 $('#top').onclick=e=>{const t=e.target.closest('button');if(!t)return;
  if(t.dataset.w){weekOff+=+t.dataset.w;sel='';render()}
  else if('cal' in t.dataset){calOpen=!calOpen;topbar()}
@@ -364,8 +377,6 @@ function home(){
  const tot=Object.keys(KINDS).reduce((a,k)=>a+Math.min(WEEK_MIN,daysDone(me.id,k)),0),pc=Math.round(tot/(3*WEEK_MIN)*100);
  const decl=Object.entries(KINDS).map(([k,K])=>{const u=dq(me.id,today,null,k),dn=daysDone(me.id,k);
   return `<div class="tile"><button class="tl" data-go="${PG[k]}"><span class="ti">${ICO[k]}</span><b>${K.title}</b><span class="mu">${u}/${K.max} aujourd’hui · ${dn}/${WEEK_MIN} jours</span><div class="bar"><i style="width:${Math.min(100,u/K.max*100)}%"></i></div></button><button class="btn sm" data-qd="${k}">+ Déclarer</button></div>`}).join('');
- const AD=[['valid','✅','Validation',pend?pend+' à traiter':'Tout est à jour',pend],['history','📜','Historique','Preuves déjà traitées',0],['team','📊','Suivi équipe','Quotas de la semaine',0],['absences','🌙','Absences',away?away+' absent'+(away>1?'s':'')+' aujourd’hui':'Personne d’absent',0],['members','👥','Membres',inact?inact+' compte'+(inact>1?'s':'')+' à activer':'Comptes et rangs',inact]];
- const adm_=AD.map(([p,i,t,s,n])=>`<div class="tile go"><button class="tl" data-go="${p}"><span class="ti">${i}</span><b>${t}${n?`<span class="dot">${n}</span>`:''}</b><span class="mu">${s}</span></button></div>`).join('');
  return `<div class="hub">
  <div class="hero"><div><h1>Salut ${first} 👋</h1><div class="mu">${rk(me)} · semaine du ${fr(ws())}</div></div>
   <div class="hstat"><div class="mu" style="text-align:right">Objectif<br>de la semaine</div><div class="ring" style="--p:${pc}"><b>${pc}%</b></div></div></div>
@@ -373,7 +384,7 @@ function home(){
  <div class="duo">
   <section class="big"><div class="bt"><div class="bi">📝</div><div><h2>Décla<span>ration</span></h2><div class="mu">Envoie tes preuves et tes montants en quelques clics.</div></div></div><div class="tiles">${decl}</div></section>
   <section class="big adm ${adm?'':'lock'}"><div class="bt"><div class="bi">🛡️</div><div><h2>Admi<span>nistration</span></h2><div class="mu">Contrôle, suivi et gestion de l’équipe.</div></div></div>
-  ${adm?`<div class="tiles">${adm_}</div>`:'<div class="lockmsg">🔒 Réservé à la direction</div>'}</section>
+  ${adm?`<div class="tiles">${adTiles()}</div>`:'<div class="lockmsg">🔒 Réservé à la direction</div>'}</section>
  </div></div>`}
 function valid(){
  const l=subs.filter(s=>s.st==='p');
@@ -472,6 +483,46 @@ $('#fan').onsubmit=async e=>{e.preventDefault();const m=$('#anm').value.trim();i
   $('#dan').close();await loadData();flash('Annonce publiée.')}
  catch(x){console.error(x);flash('Publication refusée : tables manquantes ou droits insuffisants.')}};
 async function rmAnn(){try{const {error}=await sb.from('announcements').delete().not('id','is',null);if(error)throw error;await loadData();flash('Annonce retirée.')}catch(x){console.error(x);flash('Suppression refusée.')}}
+function adTiles(){const pend=subs.filter(s=>s.st==='p').length,inact=users.filter(u=>!u.on).length,away=users.filter(u=>u.on&&absOn(u.id,today)).length;
+ return [['valid','✅','Validation',pend?pend+' à traiter':'Tout est à jour',pend],['history','📜','Historique','Preuves déjà traitées',0],['team','📊','Suivi équipe','Quotas de la semaine',0],['stats','📈','Statistiques','Argent, quotas et classement',0],['absences','🌙','Absences',away?away+' absent'+(away>1?'s':'')+' aujourd’hui':'Personne d’absent',0],['members','👥','Membres',inact?inact+' compte'+(inact>1?'s':'')+' à activer':'Comptes et rangs',inact]]
+ .map(([p,i,t,x,n])=>`<div class="tile go"><button class="tl" data-go="${p}"><span class="ti">${i}</span><b>${t}${n?`<span class="dot">${n}</span>`:''}</b><span class="mu">${x}</span></button></div>`).join('')}
+function admin(){return `<div class="head"><div><h2>Administration</h2><div class="mu">Contrôle, suivi et gestion de l’équipe.</div></div></div><div class="tiles" style="margin-top:0">${adTiles()}</div>`}
+const CH=[620,210,46,26,14];
+function bars(v,L){const [w,h,pl,pb,pt]=CH,mx=Math.max(...v,1)*1.1,bw=(w-pl)/v.length;let o=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Argent validé par semaine">`;
+ for(let i=0;i<=3;i++){const y=pt+(h-pt-pb)*(1-i/3);o+=`<line x1="${pl}" x2="${w}" y1="${y}" y2="${y}" style="stroke:rgba(255,255,255,.07)"/><text x="${pl-6}" y="${y+4}" text-anchor="end" style="fill:var(--mu)" font-size="10">${Math.round(mx*i/3/1000)}k</text>`}
+ v.forEach((x,i)=>{const bh=(h-pt-pb)*x/mx,X=pl+i*bw+bw*.18;o+=`<rect x="${X}" y="${h-pb-bh}" width="${bw*.64}" height="${bh}" rx="4" style="fill:${i==v.length-1?'var(--ac)':'color-mix(in srgb,var(--ac) 42%,transparent)'}"><title>${L[i]} : ${fmt(x)}</title></rect><text x="${X+bw*.32}" y="${h-8}" text-anchor="middle" style="fill:var(--mu)" font-size="10">${L[i]}</text>`});return o+'</svg>'}
+function line(v,L){const [w,h,pl,pb,pt]=CH,st=(w-pl)/v.length,X=i=>pl+st*i+st/2,Y=x=>pt+(h-pt-pb)*(1-x/100);let o=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Quotas atteints par semaine">`;
+ [0,50,100].forEach(g=>o+=`<line x1="${pl}" x2="${w}" y1="${Y(g)}" y2="${Y(g)}" style="stroke:rgba(255,255,255,.07)"/><text x="${pl-6}" y="${Y(g)+4}" text-anchor="end" style="fill:var(--mu)" font-size="10">${g}%</text>`);
+ const pts=v.map((x,i)=>X(i)+','+Y(x)).join(' ');
+ o+=`<polygon points="${X(0)},${Y(0)} ${pts} ${X(v.length-1)},${Y(0)}" style="fill:color-mix(in srgb,var(--ok) 12%,transparent)"/><polyline points="${pts}" fill="none" style="stroke:var(--ok)" stroke-width="2.5" stroke-linejoin="round"/>`;
+ v.forEach((x,i)=>o+=`<circle cx="${X(i)}" cy="${Y(x)}" r="4" style="fill:var(--ok)"><title>${L[i]} : ${Math.round(x)} %</title></circle><text x="${X(i)}" y="${h-8}" text-anchor="middle" style="fill:var(--mu)" font-size="10">${L[i]}</text>`);return o+'</svg>'}
+let sper=6;
+const canQ=r=>r.ab<=7-WEEK_MIN;
+function wkData(n){return Array.from({length:n},(_,i)=>{const st=add(wkStart(today),-7*(n-1-i)),ds=[0,1,2,3,4,5,6].map(j=>add(st,j)),end=new Date(add(st,7)+'T00:00:00').getTime();
+ return{st,rows:users.filter(u=>u.on&&!(new Date(u.at).getTime()>end)).map(u=>{const r={u,ab:ds.filter(d=>absOn(u.id,d)).length,days:{}};
+  Object.keys(KINDS).forEach(k=>r.days[k]=ds.filter(d=>dq(u.id,d,'v',k)>=KINDS[k].max).length);
+  r.money=subs.filter(x=>x.uid===u.id&&x.kind!=='container'&&x.st==='v'&&ds.includes(x.date)).reduce((a,x)=>a+x.amt,0);return r})}})}
+function stats(){
+ const n=sper*2>12?sper:sper*2,all=wkData(n),sl=all.slice(-sper),pv=n>sper?all.slice(0,n-sper):null,sum=a=>a.reduce((x,y)=>x+y,0);
+ const ag=a=>{let money=0,days=0,ok=0,pr=0;a.forEach(w=>w.rows.forEach(r=>{money+=r.money;const v=Object.values(r.days);days+=sum(v);if(canQ(r))v.forEach(x=>{pr++;if(x>=WEEK_MIN)ok++})}));return{money,days,q:pr?ok/pr*100:0}};
+ const A=ag(sl),B=pv&&ag(pv),nm=users.filter(u=>u.on).length||1,L=sl.map(w=>fr(w.st).slice(0,5));
+ const dl=(c,b,pts)=>{if(b==null)return'<span class="d mu">Pas de période précédente</span>';const v=pts?c-b:(b?(c-b)/b*100:0);return`<span class="d ${v>=0?'up':'dn'}">${v>=0?'▲':'▼'} ${Math.abs(v).toFixed(pts?1:0)}${pts?' pts':' %'}</span> <span class="d mu">vs période précédente</span>`};
+ const K=[['Argent validé',fmt(A.money),dl(A.money,B&&B.money)],['Quotas atteints',A.q.toFixed(0)+' %',dl(A.q,B&&B.q,1)],['Jours complets',A.days,dl(A.days,B&&B.days)],['Moyenne par membre',fmt(Math.round(A.money/nm/sper))+' / sem.',dl(A.money,B&&B.money)]];
+ const rows=sl.flatMap(w=>w.rows).filter(canQ),ICO={container:'📦',atm:'🏧',superette:'🏪'};
+ const act=Object.entries(KINDS).map(([k,X])=>{const ok=rows.filter(r=>r.days[k]>=WEEK_MIN).length,q=rows.length?ok/rows.length*100:0,av=rows.length?sum(rows.map(r=>r.days[k]))/rows.length:0;
+  return`<div style="display:flex;justify-content:space-between"><b>${ICO[k]} ${X.col}</b><span class="mu">${av.toFixed(1)} j / membre / sem.</span></div><div class="bar" style="height:6px"><i class="${q>=60?'ok':''}" style="width:${q}%"></i></div><div class="mu" style="margin:-4px 0 14px;font-size:12px">${q.toFixed(0)} % des membres ont atteint le quota</div>`}).join('');
+ const R=users.filter(u=>u.on).map(u=>{let money=0,days=0,ok=0,pr=0,h1=0,h2=0,c1=0,c2=0;sl.forEach((w,i)=>{const r=w.rows.find(x=>x.u.id===u.id);if(!r)return;money+=r.money;const v=Object.values(r.days);days+=sum(v);
+   if(canQ(r))v.forEach(x=>{pr++;const f=i<sper/2;f?c1++:c2++;if(x>=WEEK_MIN){ok++;f?h1++:h2++}})});
+  return{n:u.name,money,days,q:pr?ok/pr*100:null,t:c1&&c2?(h2/c2-h1/c1)*100:0}}).sort((a,b)=>b.money-a.money);
+ return `<div class="head"><div><h2>Statistiques</h2><div class="mu">Du ${L[0]} à la semaine en cours · ${nm} membre${nm>1?'s':''} actif${nm>1?'s':''} · les semaines d’absence (4 jours ou plus) ne comptent pas dans les quotas.</div></div>
+ <div class="seg">${[4,6,12].map(x=>`<button data-sn="${x}" class="${x===sper?'on':''}">${x} semaines</button>`).join('')}</div></div>
+ <div class="kpis">${K.map(([t,v,d])=>`<div class="card"><span class="mu">${t}</span><div class="v">${v}</div>${d}</div>`).join('')}</div>
+ <div class="dd"><div class="card"><b>Argent validé par semaine</b><div class="mu">ATM et supérettes</div>${bars(sl.map(w=>sum(w.rows.map(r=>r.money))),L)}</div>
+ <div class="card"><b>Quotas atteints par semaine</b><div class="mu">Part des activités à ${WEEK_MIN} jours complets ou plus</div>${line(sl.map(w=>{const r=w.rows.filter(canQ),t=r.length*3;return t?sum(r.map(x=>Object.values(x.days).filter(d=>d>=WEEK_MIN).length))/t*100:0}),L)}</div></div>
+ <div class="dd t"><div class="card"><b>Par activité</b><div class="mu" style="margin-bottom:12px">Sur la période choisie</div>${act}</div>
+ <div class="card" style="padding:0"><div style="padding:14px 14px 0"><b>Classement des membres</b><div class="mu">Trié par argent validé</div></div><div class="tw"><table><thead><tr><th>#</th><th>Membre</th><th class="n">Jours complets</th><th class="n">Argent</th><th>Quotas</th><th>Tendance</th></tr></thead><tbody>
+ ${R.map((r,i)=>`<tr><td class="mu">${['🥇','🥈','🥉'][i]||i+1}</td><td>${esc(r.n)}${r.q!==null&&r.q<40?' <span class="tag p">À surveiller</span>':''}</td><td class="n">${r.days}</td><td class="n">${fmt(r.money)}</td><td>${r.q===null?'<span class="mu">Absent</span>':`<span class="mini"><i style="width:${r.q}%"></i></span>${r.q.toFixed(0)} %`}</td><td class="${r.t>=0?'up':'dn'}">${r.t>=10?'▲ en hausse':r.t<=-10?'▼ en baisse':'<span class="mu">● stable</span>'}</td></tr>`).join('')||'<tr><td colspan="6" class="mu">Aucun membre actif.</td></tr>'}
+ </tbody></table></div></div></div>`}
 function members(){
  const can=u=>u.rank>me.rank;
  return `<div class="head"><div><h2>Membres</h2><div class="mu">Comptes créés, activation et hiérarchie. Nom RP et Discord visibles par la direction. Le PIN n’est jamais affiché ni stocké dans le profil.</div></div></div>
@@ -498,6 +549,7 @@ $('#view').onclick=e=>{const t=e.target,g=a=>t.dataset[a];
  if(g('delabs')){delAbs(g('delabs'));return}
  if(g('annnew')){$('#anm').value=ann?ann.msg:'';$('#dan').showModal();return}
  if(g('annrm')){rmAnn();return}
+ if(g('sn')){sper=+g('sn');render();return}
  if(g('hf')){hf=g('hf');render()}
  if(g('ok'))wr('subs/'+g('ok'),{st:'v'});
  if(g('no')){rejId=g('no');$('#frf').reset();$('#drf').showModal()}
