@@ -233,7 +233,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const add=(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
-const today=iso(new Date()),fr=s=>s.split('-').reverse().join('/');
+let today=iso(new Date());const fr=s=>s.split('-').reverse().join('/');
 const wkStart=s=>add(s,-((new Date(s+'T12:00:00').getDay()+6)%7));
 let absn=[],absOk=true,ann=null,annOk=true,notifs=[],notOk=true,seenN=null;
 let users=[],subs=[],me=null,meId=null,page='home',rejId=null,weekOff=0,sel='',calOpen=false,loaded=false;
@@ -346,6 +346,7 @@ async function boot(){
 boot();
 const PAGES=[['home','Accueil',0],['mine','Mes conteneurs',0],['atm','Mes ATM',0],['superette','Mes Supérettes',0],['settings','Paramètres',0],['admin','Administration',1],['valid','Validation des preuves',1],['history','Historique',1],['team','Suivi équipe',1],['stats','Statistiques',1],['absences','Absences',1],['members','Membres',1]];
 function render(){
+ today=iso(new Date());
  const adm=isAdmin(me),pend=subs.filter(s=>s.st==='p').length,inact=users.filter(u=>!u.on).length;
  if(PAGES.find(p=>p[0]===page)[2]&&!adm)page='mine';
  $('#mn').textContent=me.name;$('#mr').textContent=rk(me);
@@ -588,14 +589,14 @@ $('#view').oninput=e=>{if(e.target.id==='bri'){S.bright=+e.target.value;apply();
 $('#view').onchange=e=>{if('hm' in e.target.dataset){hm=e.target.value;render();return}if(e.target.dataset.rk)wr('accounts/'+e.target.dataset.rk,{rank:+e.target.value})};
 $('#frf').onsubmit=e=>{e.preventDefault();wr('subs/'+rejId,{st:'r',reason:$('#rr').value});$('#drf').close()};
 let curKind='container';
-function openSub(k){curKind=k;const K=KINDS[k],pic=k==='container';$('#fs').reset();$('#dt').textContent='Déclarer '+K.decl;$('#ql').textContent=K.q;
+function openSub(k){today=iso(new Date());curKind=k;const K=KINDS[k],pic=k==='container';$('#fs').reset();$('#dt').textContent='Déclarer '+K.decl;$('#ql').textContent=K.q;
  $('#phw').classList.toggle('hide',!pic);$('#amw').classList.toggle('hide',pic);$('#sp').required=pic;$('#sa').required=!pic;
  $('#sd').value=today;$('#sd').min=wkStart(today);$('#sd').max=today;$('#sm').textContent='';$('#sprev').classList.add('hide');upd();$('#dsub').showModal()}
 function upd(){const K=KINDS[curKind],left=Math.max(0,K.max-dq(me.id,$('#sd').value||today,null,curKind));$('#sl').textContent=`Il te reste ${left} ${K.unit} déclarable${left>1?'s':''} ce jour-là.`;$('#sq').max=Math.max(1,left)}
 $('#sd').onchange=upd;
 $('#sp').onchange=e=>{const f=e.target.files[0],i=$('#sprev');if(f){i.src=URL.createObjectURL(f);i.classList.remove('hide')}else i.classList.add('hide')};
 const blobOf=(f,max,q)=>new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=()=>{const im=new Image();im.onerror=rej;im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(),'image/jpeg',q)};im.src=r.result};r.readAsDataURL(f)});
-$('#fs').onsubmit=async e=>{e.preventDefault();const k=curKind,K=KINDS[k],pic=k==='container',d=$('#sd').value,q=+$('#sq').value,m=$('#sm'),file=$('#sp').files[0],amt=Math.round(+$('#sa').value);
+$('#fs').onsubmit=async e=>{e.preventDefault();today=iso(new Date());const k=curKind,K=KINDS[k],pic=k==='container',d=$('#sd').value,q=+$('#sq').value,m=$('#sm'),file=$('#sp').files[0],amt=Math.round(+$('#sa').value);
  if(d>today||wkStart(d)!==wkStart(today))return m.textContent='Date invalide : semaine en cours uniquement.';
  if(pic&&!file)return m.textContent='Ajoute une photo comme preuve.';
  if(!pic&&!(amt>0))return m.textContent='Entre le montant récolté.';
@@ -608,6 +609,8 @@ $('#fs').onsubmit=async e=>{e.preventDefault();const k=curKind,K=KINDS[k],pic=k=
   const {error}=await sb.from('submissions').insert(row);if(error){if(path)await sb.storage.from('proofs').remove([path]);throw error}
   $('#dsub').close();weekOff=0;await loadData();render();
  }catch(x){console.error(x);m.textContent=pic?'Envoi impossible. Vérifie les droits Storage et les règles RLS.':'Envoi impossible : '+(x.message||'vérifie la migration SQL ATM/Supérettes.')}};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&iso(new Date())!==today&&!$('#dsub').open&&typeof me!=='undefined'&&me)render()});
+setInterval(()=>{if(iso(new Date())!==today&&!$('#dsub').open&&typeof me!=='undefined'&&me)render()},60000);
 </script>
 </body>
 </html>
