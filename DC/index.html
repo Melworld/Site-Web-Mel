@@ -230,7 +230,7 @@ tr.hl{background:var(--acd)!important}tr.hl td:first-child{box-shadow:inset 3px 
 </form></dialog>
 
 <dialog id="dop"><form id="fop"><h2>Déclarer une opération</h2>
- <label for="ot">Type d’opération</label><select id="ot"><option value="fleeca">Fleeca</option><option value="cambrio">Cambriolage</option><option value="weed">Farm de weed</option><option value="speedo">Speedo</option></select>
+ <label for="ot">Type d’opération</label><select id="ot"><option value="fleeca">Fleeca</option><option value="cambrio">Cambriolage</option><option value="weed">Farm de weed</option><option value="speedo">Speedo</option><option value="gofast">Go-fast</option></select>
  <label for="od">Jour</label><input id="od" type="date" required><label for="oi">Heure</label><input id="oi" type="time" required>
  <label>Participants</label><div id="opp" style="max-height:200px;overflow:auto"></div>
  <label for="onote">Note (facultatif)</label><input id="onote"><div class="msg" id="om"></div>
@@ -680,7 +680,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&iso(new D
 setInterval(()=>{if(iso(new Date())!==today&&!$('#dsub').open&&typeof me!=='undefined'&&me)render()},60000);
 
 /* ===== OPÉRATIONS & SPEEDOS ===== */
-const OPS_TYPES=[['fleeca','Fleeca'],['cambrio','Cambriolage'],['weed','Farm de weed'],['speedo','Speedo'];
+const OPS_TYPES=[['fleeca','Fleeca'],['cambrio','Cambriolage'],['weed','Farm de weed'],['speedo','Speedo'],['gofast','Go-fast']];
 const SPD_TYPES=[['acide','Speedo d’acide'],['phosphore','Phosphore rouge'],['anhydride','Acide anhydride'],['autre','Autre (speedo)']];
 const GIVES=[['armes','Armes'],['sale','Argent sale'],['services','Services'],['propre','Argent propre']];
 const OPS_SQL=`create table public.operations(
